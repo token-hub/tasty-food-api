@@ -10,10 +10,6 @@ const RecipeSchema = new Schema({
     },
     ingredients: [
         {
-            createdAt: {
-                type: Number,
-                default: Date.now
-            },
             name: {
                 type: String,
                 trim: true,
