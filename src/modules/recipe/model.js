@@ -123,26 +123,30 @@ const RecipeSchema = new Schema({
     createdAt: {
         type: Date,
         required: true
-    },
-    topRatedIndex: {
-        type: String,
-        index: true,
-        unique: true,
-        required: true
-    },
-    categoriesIndex: {
-        type: String,
-        index: true,
-        unique: true,
-        required: true
-    },
-    ownRecipeIndex: {
-        type: String,
-        index: true,
-        unique: true,
-        required: true
     }
+    // topRatedIndex: {
+    //     type: String,
+    //     index: true,
+    //     unique: true,
+    //     required: true
+    // },
+    // categoriesIndex: {
+    //     type: String,
+    //     index: true,
+    //     unique: true,
+    //     required: true
+    // },
+    // ownRecipeIndex: {
+    //     type: String,
+    //     index: true,
+    //     unique: true,
+    //     required: true
+    // }
 });
+
+RecipeSchema.index({ totalRatings: -1, createdAt: -1 });
+RecipeSchema.index({ "author.userId": -1, createdAt: -1 });
+RecipeSchema.index({ categories: -1 });
 
 const RecipeModel = mongoose.model("Recipe", RecipeSchema);
 
