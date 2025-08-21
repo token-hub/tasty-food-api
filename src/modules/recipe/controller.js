@@ -14,7 +14,6 @@ class RecipeController {
                 }
             });
         } catch (error) {
-            console.log(error);
             const errors = Object.entries(error.errors).map((err) => {
                 return {
                     [err[0]]: err[1].message
