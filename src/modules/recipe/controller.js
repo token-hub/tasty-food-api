@@ -1,7 +1,7 @@
 import RecipeService from "./service.js";
 
 class RecipeController {
-    async getAllRecipes(req, res) {
+    async createRecipe(req, res) {
         try {
             const userData = req.body;
             const service = new RecipeService();
