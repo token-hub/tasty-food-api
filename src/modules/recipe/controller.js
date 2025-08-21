@@ -69,6 +69,22 @@ class RecipeController {
             });
         }
     }
+
+    async updateRecipe(req, res) {
+        try {
+            const recipeId = req.params?.recipeId;
+            const data = req.body;
+            const recipe = await this.service.updateRecipe(recipeId, data);
+            res.status(200).json({
+                status: "Recipe successfully updated",
+                data: recipe
+            });
+        } catch (error) {
+            return res.status(422).json({
+                error: "something went wrong"
+            });
+        }
+    }
 }
 
 export default new RecipeController();
