@@ -10,7 +10,10 @@ const RecipeSchema = new Schema({
     },
     ingredients: [
         {
-            createdAt: Date,
+            createdAt: {
+                type: Number,
+                default: Date.now
+            },
             name: {
                 type: String,
                 trim: true,
@@ -34,7 +37,7 @@ const RecipeSchema = new Schema({
     prepTime: {
         hours: {
             type: Number,
-            required: true
+            default: 0
         },
         minutes: {
             type: Number,
@@ -44,7 +47,7 @@ const RecipeSchema = new Schema({
     cookTime: {
         hours: {
             type: Number,
-            required: true
+            default: 0
         },
         minutes: {
             type: Number,
@@ -54,11 +57,13 @@ const RecipeSchema = new Schema({
     name: {
         type: String,
         trim: true,
-        lowercase: true
+        lowercase: true,
+        required: true
     },
     description: {
         type: String,
-        trim: true
+        trim: true,
+        required: true
     },
     categories: [String],
     image: {
@@ -86,7 +91,7 @@ const RecipeSchema = new Schema({
     },
     goodForPeopleCount: {
         type: Number,
-        default: 0
+        default: 1
     },
     topFiveRecentRatings: [
         {
@@ -115,13 +120,15 @@ const RecipeSchema = new Schema({
             },
             likes: [mongoose.Schema.Types.ObjectId],
             createdAt: {
-                type: Date,
+                type: Number,
+                default: Date.now,
                 required: true
             }
         }
     ],
     createdAt: {
-        type: Date,
+        type: Number,
+        default: Date.now,
         required: true
     }
     // topRatedIndex: {
