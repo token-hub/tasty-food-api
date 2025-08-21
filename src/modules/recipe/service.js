@@ -33,6 +33,19 @@ class RecipeService {
 
         return this.model.create(data);
     }
+
+    updateRecipe(recipeId, data) {
+        if (!recipeId) {
+            throw new Error("Recipe Id is missing");
+        }
+
+        const id = new ObjectId(recipeId);
+
+        return this.model.findByIdAndUpdate(id, data, {
+            runValidators: true,
+            returnDocument: "after"
+        });
+    }
 }
 
 export default RecipeService;
