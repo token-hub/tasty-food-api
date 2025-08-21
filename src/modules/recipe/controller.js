@@ -14,15 +14,20 @@ class RecipeController {
                 }
             });
         } catch (error) {
-            const errors = Object.entries(error.errors).map((err) => {
-                return {
-                    [err[0]]: err[1].message
-                };
-            });
+            if (error.errors) {
+                const errors = Object.entries(error.errors).map((err) => {
+                    return {
+                        [err[0]]: err[1].message
+                    };
+                });
+                return res.status(422).json({
+                    error: error._message,
+                    details: errors
+                });
+            }
 
             return res.status(422).json({
-                error: error._message,
-                details: errors
+                error: "something went wrong"
             });
         }
     }
