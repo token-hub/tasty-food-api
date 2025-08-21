@@ -46,9 +46,22 @@ class RecipeController {
             const recipes = await await this.service.getAllRecipes();
             res.status(200).json({
                 status: "success",
-                data: {
-                    recipes
-                }
+                data: recipes
+            });
+        } catch (error) {
+            return res.status(422).json({
+                error: "something went wrong"
+            });
+        }
+    }
+
+    async getRecipe(req, res) {
+        try {
+            const recipeId = req.params?.recipeId;
+            const recipe = await this.service.getRecipe(recipeId);
+            res.status(200).json({
+                status: "success",
+                data: recipe
             });
         } catch (error) {
             return res.status(422).json({
