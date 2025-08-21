@@ -1,9 +1,8 @@
 import RecipeController from "./controller.js";
 
 function recipeRoutes(router) {
-    router.get("/", async (req, res) => {
-        await RecipeController.createRecipe(req, res);
-    });
+    router.get("/", (req, res) => RecipeController.getAllRecipes(req, res));
+    router.post("/", (req, res) => RecipeController.createRecipe(req, res));
     return router;
 }
 
