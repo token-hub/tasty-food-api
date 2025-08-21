@@ -16,6 +16,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
 // routes
-app.use("/api/recipes", () => recipeRoutes(router));
+app.use("/api/recipes", recipeRoutes(router));
 
 export default app;
