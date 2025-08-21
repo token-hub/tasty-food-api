@@ -1,5 +1,6 @@
 import RecipeModel from "./model.js";
 import { ObjectId } from "mongodb";
+
 class RecipeService {
     #model;
 
@@ -13,6 +14,15 @@ class RecipeService {
 
     getAllRecipes() {
         return this.model.find();
+    }
+
+    getRecipe(recipeId) {
+        if (!recipeId) {
+            throw new Error("Recipe Id is missing");
+        }
+
+        const id = new ObjectId(recipeId);
+        return this.model.findById(id);
     }
 
     createRecipe(data) {
