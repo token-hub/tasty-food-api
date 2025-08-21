@@ -1,11 +1,20 @@
 import RecipeService from "./service.js";
 
 class RecipeController {
+    #service;
+
+    constructor() {
+        this.#service = new RecipeService();
+    }
+
+    get service() {
+        return this.#service;
+    }
+
     async createRecipe(req, res) {
         try {
             const userData = req.body;
-            const service = new RecipeService();
-            const newRecipe = await service.createRecipe(userData);
+            const newRecipe = await this.service.createRecipe(userData);
             res.status(200).json({
                 status: "success",
                 message: "recipe created successfully.",
@@ -26,6 +35,22 @@ class RecipeController {
                 });
             }
 
+            return res.status(422).json({
+                error: "something went wrong"
+            });
+        }
+    }
+
+    async getAllRecipes(req, res) {
+        try {
+            const recipes = await await this.service.getAllRecipes();
+            res.status(200).json({
+                status: "success",
+                data: {
+                    recipes
+                }
+            });
+        } catch (error) {
             return res.status(422).json({
                 error: "something went wrong"
             });
