@@ -154,6 +154,7 @@ const RecipeSchema = new Schema(
 RecipeSchema.index({ totalRatings: -1, createdAt: -1 });
 RecipeSchema.index({ "author.userId": -1, createdAt: -1 });
 RecipeSchema.index({ categories: -1 });
+RecipeSchema.index({ updatedAt: -1 });
 
 const RecipeModel = mongoose.model("Recipe", RecipeSchema);
 
