@@ -12,15 +12,25 @@ class RecipeService {
         return this.#model;
     }
 
-    async getAllRecipes({ page = 1, limit = 6 } = {}) {
-        const skip = (page - 1) * limit;
+    async getAllRecipes({ lastData, limit = 6, sortBy = "updatedAt", order = -1 } = {}) {
+        let query = {};
 
-        const [recipes, total] = await Promise.all([this.model.find().skip(skip).limit(limit), this.model.countDocuments()]);
+        if (lastData) {
+            query.updatedAt = { [order == -1 ? "$lt" : "$gt"]: new Date(lastData) };
+        }
+
+        const [recipes, total] = await Promise.all([
+            this.model
+                .find(query)
+                .sort({ [sortBy]: order })
+                .limit(limit),
+            this.model.countDocuments()
+        ]);
 
         return {
             recipes,
             total,
-            page,
+            page: 1,
             totalPages: Math.ceil(total / limit)
         };
     }
