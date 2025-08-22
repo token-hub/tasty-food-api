@@ -13,7 +13,7 @@ class RecipeService {
     }
 
     async getAllRecipes({
-        lastData,
+        cursor,
         filters = {
             categories: []
         },
@@ -23,8 +23,8 @@ class RecipeService {
     } = {}) {
         let query = {};
 
-        if (lastData) {
-            query.updatedAt = { [order == -1 ? "$lt" : "$gt"]: new Date(lastData) };
+        if (cursor) {
+            query.updatedAt = { [order == -1 ? "$lt" : "$gt"]: new Date(cursor) };
         }
 
         if (filters?.categories.length) {
