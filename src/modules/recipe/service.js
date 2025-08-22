@@ -12,8 +12,17 @@ class RecipeService {
         return this.#model;
     }
 
-    getAllRecipes() {
-        return this.model.find();
+    async getAllRecipes({ page = 1, limit = 6 } = {}) {
+        const skip = (page - 1) * limit;
+
+        const [recipes, total] = await Promise.all([this.model.find().skip(skip).limit(limit), this.model.countDocuments()]);
+
+        return {
+            recipes,
+            total,
+            page,
+            totalPages: Math.ceil(total / limit)
+        };
     }
 
     getRecipe(recipeId) {
