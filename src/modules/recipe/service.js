@@ -12,11 +12,23 @@ class RecipeService {
         return this.#model;
     }
 
-    async getAllRecipes({ lastData, limit = 6, sortBy = "updatedAt", order = -1 } = {}) {
+    async getAllRecipes({
+        lastData,
+        filters = {
+            categories: []
+        },
+        limit = 6,
+        sortBy = "updatedAt",
+        order = -1
+    } = {}) {
         let query = {};
 
         if (lastData) {
             query.updatedAt = { [order == -1 ? "$lt" : "$gt"]: new Date(lastData) };
+        }
+
+        if (filters?.categories.length) {
+            query.categories = { $in: filters.categories };
         }
 
         const [recipes, total] = await Promise.all([
