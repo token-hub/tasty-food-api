@@ -13,6 +13,8 @@ class RecipeService {
     }
 
     async getAllRecipes({
+        targetPage = 1,
+        currentPage = 1,
         cursor,
         filters = {
             categories: []
@@ -21,30 +23,32 @@ class RecipeService {
         sortBy = "updatedAt",
         order = -1
     } = {}) {
-        let query = {};
+        const difference = +(targetPage - currentPage);
+        const skip = limit * difference;
 
+        let query = {};
         if (cursor) {
-            query.updatedAt = { [order == -1 ? "$lt" : "$gt"]: new Date(cursor) };
+            query.updatedAt = { [order == -1 ? "$lte" : "$gte"]: new Date(cursor) };
         }
 
         if (filters?.categories.length) {
             query.categories = { $in: filters.categories };
         }
 
-        const [recipes, total] = await Promise.all([
-            this.model
-                .find(query)
-                .sort({ [sortBy]: order })
-                .limit(limit),
-            this.model.countDocuments()
-        ]);
+        const recipes = this.model
+            .find(query)
+            .skip(skip)
+            .sort({ [sortBy]: order })
+            .limit(limit);
 
         return {
             recipes,
-            total,
-            page: 1,
-            totalPages: Math.ceil(total / limit)
+            page: targetPage
         };
+    }
+
+    getTotalRecipe() {
+        return this.model.countDocuments();
     }
 
     getRecipe(recipeId) {
