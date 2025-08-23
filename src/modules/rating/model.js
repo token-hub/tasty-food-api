@@ -10,6 +10,7 @@ const RatingSchema = new Schema(
             raterId: { type: Schema.Types.ObjectId, required: true },
             name: { type: String, required: true }
         },
+        rate: { type: Number, required: true },
         likes: [{ type: Schema.Types.ObjectId }]
     },
     { timestamps: true }
