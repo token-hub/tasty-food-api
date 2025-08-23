@@ -27,13 +27,7 @@ class RecipeController {
 
     getAllRecipes = async (req, res, next) => {
         try {
-            const options = {
-                page: req?.body.page,
-                limit: req?.body?.limit,
-                cursor: req?.body?.cursor,
-                order: req?.body?.order
-            };
-
+            const options = req.body;
             const data = await this.service.getAllRecipes(options);
             res.status(200).json({
                 status: "success",
