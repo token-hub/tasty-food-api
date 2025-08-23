@@ -16,6 +16,7 @@ const RatingSchema = new Schema(
 );
 
 RatingSchema.index({ recipeId: -1, createdAt: -1 });
+RatingSchema.index({ updatedAt: -1 });
 
 const RecipeModel = mongoose.model("Rating", RatingSchema);
 
