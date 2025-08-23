@@ -11,37 +11,21 @@ class RecipeController {
         return this.#service;
     }
 
-    async createRecipe(req, res) {
+    createRecipe = async (req, res, next) => {
         try {
             const userData = req.body;
             const newRecipe = await this.service.createRecipe(userData);
             res.status(200).json({
                 status: "success",
                 message: "recipe created successfully.",
-                data: {
-                    newRecipe
-                }
+                data: newRecipe
             });
         } catch (error) {
-            if (error.errors) {
-                const errors = Object.entries(error.errors).map((err) => {
-                    return {
-                        [err[0]]: err[1].message
-                    };
-                });
-                return res.status(422).json({
-                    error: error._message,
-                    details: errors
-                });
-            }
-
-            return res.status(422).json({
-                error: "something went wrong"
-            });
+            next(error);
         }
-    }
+    };
 
-    async getAllRecipes(req, res) {
+    getAllRecipes = async (req, res, next) => {
         try {
             const options = {
                 page: req?.body.page,
@@ -56,13 +40,11 @@ class RecipeController {
                 data
             });
         } catch (error) {
-            return res.status(422).json({
-                error: "something went wrong"
-            });
+            next(error);
         }
-    }
+    };
 
-    async getRecipe(req, res) {
+    getRecipe = async (req, res, next) => {
         try {
             const recipeId = req.params?.recipeId;
             const recipe = await this.service.getRecipe(recipeId);
@@ -71,13 +53,11 @@ class RecipeController {
                 data: recipe
             });
         } catch (error) {
-            return res.status(422).json({
-                error: "something went wrong"
-            });
+            next(error);
         }
-    }
+    };
 
-    async updateRecipe(req, res) {
+    updateRecipe = async (req, res, next) => {
         try {
             const recipeId = req.params?.recipeId;
             const data = req.body;
@@ -87,11 +67,9 @@ class RecipeController {
                 data: recipe
             });
         } catch (error) {
-            return res.status(422).json({
-                error: "something went wrong"
-            });
+            next(error);
         }
-    }
+    };
 }
 
 export default new RecipeController();
