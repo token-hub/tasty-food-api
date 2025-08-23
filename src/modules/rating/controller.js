@@ -38,6 +38,20 @@ class RatingController {
             next(error);
         }
     };
+
+    getRating = async (req, res, next) => {
+        try {
+            const data = req.params;
+            const rating = await this.service.getRating(data);
+
+            return res.status(200).json({
+                status: "Success",
+                details: rating
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new RatingController();
