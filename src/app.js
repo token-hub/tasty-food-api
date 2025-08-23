@@ -5,6 +5,9 @@ import cors from "cors";
 import "./utils/db/db.js";
 import "./utils/db/mongoose.js";
 
+import { errorHandler } from "./middlewares/errors/errorHandler.js";
+import { multipleErrorsHandler } from "./middlewares/errors/multipleErrorsHandler.js";
+
 import recipeRoutes from "./modules/recipe/index.js";
 import ratingRoutes from "./modules/rating/index.js";
 
@@ -18,5 +21,8 @@ app.use(cors());
 // routes
 app.use("/api/recipes", recipeRoutes);
 app.use("/api/ratings", ratingRoutes);
+
+app.use(multipleErrorsHandler);
+app.use(errorHandler);
 
 export default app;
