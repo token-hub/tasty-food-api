@@ -40,6 +40,14 @@ class RatingService {
             data.raterId = new ObjectId(data.raterId);
         }
 
+        if (data.ratingId) {
+            data.ratingId = new ObjectId(data.ratingId);
+        }
+
+        if (data.likerId) {
+            data.likerId = new ObjectId(data.likerId);
+        }
+
         return data;
     }
 
@@ -115,6 +123,32 @@ class RatingService {
         data = this.transfromData(data);
 
         return await this.model.findOne({ recipeId: data.recipeId, "rater.raterId": data.raterId });
+    }
+
+    async likeUnlikeRating(data) {
+        // add validation for data.likerId and data.ratingId
+        data = this.transfromData(data);
+
+        const rating = await this.model.findOne({ _id: data.ratingId });
+
+        if (!rating) {
+            throw new Error("Cannot find the rating");
+        }
+
+        let update;
+        const hasAlreadyLiked = rating.likes.includes(data.likerId);
+
+        if (hasAlreadyLiked) {
+            update = { $pull: { likes: data.likerId } };
+        } else {
+            update = { $addToSet: { likes: data.likerId } };
+        }
+
+        return this.model
+            .findOneAndUpdate({ _id: rating._id }, update, {
+                new: true
+            })
+            .select("likes");
     }
 }
 
