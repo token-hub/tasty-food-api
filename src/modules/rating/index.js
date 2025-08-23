@@ -3,6 +3,6 @@ const router = express.Router();
 
 import RatingController from "./controller.js";
 
-router.post("/", (req, res) => RatingController.createRating(req, res));
+router.post("/", (req, res, next) => RatingController.createRating(req, res, next));
 
 export default router;
