@@ -35,10 +35,18 @@ class RatingService {
     getQueryAllRating(data) {
         let query = { recipeId: data.recipeId };
         const { limit, page, cursor, order } = this.paginationData;
-        let skip = limit * (page - 1) > 1 ? limit * (page - 1) : 1;
+
+        let defaultSkip = limit * (page - 1);
+        let isNotFirstPage = defaultSkip > 0;
+        let skip = isNotFirstPage ? defaultSkip : 0;
 
         if (order == 1) {
-            skip = skip - 1;
+            // need to skip 1 if user wants to be previous page due to using $gte
+            // it will match the first data of the current page
+            // and we want to skip that so that all the data from the previous
+            // page will correctly be fetch
+            let isSkipPositive = skip - 1 > 0;
+            skip = isSkipPositive ? skip - 1 : 1;
         }
 
         if (cursor) {
