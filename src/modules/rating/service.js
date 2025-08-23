@@ -32,6 +32,10 @@ class RatingService {
             data.recipeId = new ObjectId(data.recipeId);
         }
 
+        if (data?.rater?.raterId) {
+            data.rater.raterId = new ObjectId(data.rater.raterId);
+        }
+
         if (data.raterId) {
             data.raterId = new ObjectId(data.raterId);
         }
@@ -66,22 +70,23 @@ class RatingService {
     createRating(data) {
         // add validation
 
+        if (data.rate < 4 && !data.comment) {
+            throw new Error("Please add a comment");
+        }
+
         if (!data) {
             throw new Error("Missing required Data");
         }
 
-        if (data.recipeId) {
-            data.recipeId = new ObjectId(data.recipeId);
-        }
+        data = this.transfromData(data);
 
-        if (data?.rater.raterId) {
-            data.rater.raterId = new ObjectId(data?.rater.raterId);
-        }
-
-        // make the data.comment only required if the rating is below 4
         // notify the author here
 
-        return this.model.create(data);
+        return this.model.findOneAndUpdate(
+            { recipeId: data.recipeId, "rater.raterId": data.rater.raterId },
+            { $set: data },
+            { upsert: true, new: true }
+        );
     }
 
     async getAllRating(data) {
@@ -111,8 +116,6 @@ class RatingService {
 
         return await this.model.findOne({ recipeId: data.recipeId, "rater.raterId": data.raterId });
     }
-
-    async editRating() {}
 }
 
 export default RatingService;
