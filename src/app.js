@@ -7,6 +7,7 @@ import "./utils/db/mongoose.js";
 
 import { errorHandler } from "./middlewares/errors/errorHandler.js";
 import { multipleErrorsHandler } from "./middlewares/errors/multipleErrorsHandler.js";
+import { logErrors } from "./middlewares/errors/logErrors.js";
 
 import recipeRoutes from "./modules/recipe/index.js";
 import ratingRoutes from "./modules/rating/index.js";
@@ -22,6 +23,7 @@ app.use(cors());
 app.use("/api/recipes", recipeRoutes);
 app.use("/api/ratings", ratingRoutes);
 
+app.use(logErrors);
 app.use(multipleErrorsHandler);
 app.use(errorHandler);
 
