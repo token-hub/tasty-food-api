@@ -52,6 +52,20 @@ class RatingController {
             next(error);
         }
     };
+
+    likeUnlikeRating = async (req, res, next) => {
+        try {
+            const data = req.params;
+            const rating = await this.service.likeUnlikeRating(data);
+
+            return res.status(201).json({
+                status: "Success",
+                details: rating
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new RatingController();
