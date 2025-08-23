@@ -1,4 +1,5 @@
 import RatingService from "./service.js";
+import { handleErrors } from "../../utils/helper.js";
 
 class RatingController {
     #service;
@@ -11,7 +12,7 @@ class RatingController {
         return this.#service;
     }
 
-    async createRating(req, res) {
+    async createRating(req, res, next) {
         try {
             const data = req.body;
             const rating = await this.service.createRating(data);
@@ -21,21 +22,7 @@ class RatingController {
                 details: rating
             });
         } catch (error) {
-            if (error.errors) {
-                const errors = Object.entries(error.errors).map((err) => {
-                    return {
-                        [err[0]]: err[1].message
-                    };
-                });
-                return res.status(422).json({
-                    error: error._message,
-                    details: errors
-                });
-            }
-
-            return res.status(422).json({
-                error: error.message || "something went wrong"
-            });
+            next(error);
         }
     }
 }
