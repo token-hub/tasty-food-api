@@ -1,10 +1,11 @@
 import RatingModel from "./model.js";
+import { ObjectId } from "mongodb";
 
 class RatingService {
     #model;
 
     constructor() {
-        this.#model = new RatingModel();
+        this.#model = RatingModel;
     }
 
     get model() {
@@ -15,6 +16,15 @@ class RatingService {
         if (!data) {
             throw new Error("Missing required Data");
         }
+
+        if (data.recipeId) {
+            data.recipeId = new ObjectId(data.recipeId);
+        }
+
+        if (data?.rater.raterId) {
+            data.rater.raterId = new ObjectId(data?.rater.raterId);
+        }
+
         return this.model.create(data);
     }
 }
