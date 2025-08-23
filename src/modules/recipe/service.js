@@ -3,6 +3,13 @@ import { ObjectId } from "mongodb";
 
 class RecipeService {
     #model;
+    #pagination = {
+        page: 1,
+        cursor: "",
+        limit: 6,
+        sortBy: "updatedAt",
+        order: -1
+    };
 
     constructor() {
         this.#model = RecipeModel;
@@ -12,20 +19,29 @@ class RecipeService {
         return this.#model;
     }
 
-    async getAllRecipes({
-        page = 1,
-        cursor,
-        filters = {
-            categories: []
-        },
-        limit = 6,
-        sortBy = "updatedAt",
-        order = -1
-    } = {}) {
-        let skip = limit * (page - 1);
+    set paginationData(data) {
+        this.#pagination = { ...this.#pagination, ...data };
+    }
+
+    get paginationData() {
+        return this.#pagination;
+    }
+
+    getQueryAllRecipes(data) {
+        const { limit, cursor, page, order } = this.paginationData;
+        const { filters } = data;
+
+        let defaultSkip = limit * (page - 1);
+        let isNotFirstPage = defaultSkip > 0;
+        let skip = isNotFirstPage ? defaultSkip : 0;
 
         if (order == 1) {
-            skip = skip - 1;
+            // need to skip 1 if user wants to be previous page due to using $gte
+            // it will match the first data of the current page
+            // and we want to skip that so that all the data from the previous
+            // page will correctly be fetch
+            let isSkipPositive = skip - 1 > 0;
+            skip = isSkipPositive ? skip - 1 : 1;
         }
 
         let query = {};
@@ -36,6 +52,18 @@ class RecipeService {
         if (filters?.categories.length) {
             query.categories = { $in: filters.categories };
         }
+
+        return { query, skip };
+    }
+
+    async getAllRecipes(data) {
+        // add validation
+
+        this.paginationData = data.pagination;
+        delete data.pagination;
+
+        const { query, skip } = this.getQueryAllRecipes(data);
+        const { sortBy, limit, order, page } = this.paginationData;
 
         const recipes = await this.model
             .find(query)
