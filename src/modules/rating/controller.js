@@ -1,5 +1,4 @@
 import RatingService from "./service.js";
-import { handleErrors } from "../../utils/helper.js";
 
 class RatingController {
     #service;
@@ -12,7 +11,7 @@ class RatingController {
         return this.#service;
     }
 
-    async createRating(req, res, next) {
+    createRating = async (req, res, next) => {
         try {
             const data = req.body;
             const rating = await this.service.createRating(data);
@@ -24,7 +23,7 @@ class RatingController {
         } catch (error) {
             next(error);
         }
-    }
+    };
 }
 
 export default new RatingController();
