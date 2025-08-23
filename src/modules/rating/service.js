@@ -28,7 +28,14 @@ class RatingService {
     }
 
     transfromData(data) {
-        data.recipeId = new ObjectId(data.recipeId);
+        if (data.recipeId) {
+            data.recipeId = new ObjectId(data.recipeId);
+        }
+
+        if (data.raterId) {
+            data.raterId = new ObjectId(data.raterId);
+        }
+
         return data;
     }
 
@@ -97,6 +104,15 @@ class RatingService {
             page
         };
     }
+
+    async getRating(data) {
+        // add validation for data.raterId and data.recipeId
+        data = this.transfromData(data);
+
+        return await this.model.findOne({ recipeId: data.recipeId, "rater.raterId": data.raterId });
+    }
+
+    async editRating() {}
 }
 
 export default RatingService;
