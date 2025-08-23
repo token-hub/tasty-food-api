@@ -44,13 +44,13 @@ class RecipeController {
     async getAllRecipes(req, res) {
         try {
             const options = {
-                targetPage: req?.body?.targetPage,
-                currentPage: req?.body?.currentPage,
+                page: req?.body.page,
                 limit: req?.body?.limit,
-                cursor: req?.body?.cursor
+                cursor: req?.body?.cursor,
+                order: req?.body?.order
             };
 
-            const data = await await this.service.getAllRecipes(options);
+            const data = await this.service.getAllRecipes(options);
             res.status(200).json({
                 status: "success",
                 data

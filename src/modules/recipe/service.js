@@ -13,8 +13,7 @@ class RecipeService {
     }
 
     async getAllRecipes({
-        targetPage = 1,
-        currentPage = 1,
+        page = 1,
         cursor,
         filters = {
             categories: []
@@ -23,8 +22,11 @@ class RecipeService {
         sortBy = "updatedAt",
         order = -1
     } = {}) {
-        const difference = +(targetPage - currentPage);
-        const skip = limit * difference;
+        let skip = limit * (page - 1);
+
+        if (order == 1) {
+            skip = skip - 1;
+        }
 
         let query = {};
         if (cursor) {
@@ -35,7 +37,7 @@ class RecipeService {
             query.categories = { $in: filters.categories };
         }
 
-        const recipes = this.model
+        const recipes = await this.model
             .find(query)
             .skip(skip)
             .sort({ [sortBy]: order })
@@ -43,7 +45,7 @@ class RecipeService {
 
         return {
             recipes,
-            page: targetPage
+            page
         };
     }
 
