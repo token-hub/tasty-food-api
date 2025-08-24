@@ -67,9 +67,10 @@ class RecipeService {
 
         const recipes = await this.model
             .find(query)
-            .skip(skip)
             .sort({ [sortBy]: order })
-            .limit(limit);
+            .skip(skip)
+            .limit(limit)
+            .explain();
 
         return {
             recipes,
