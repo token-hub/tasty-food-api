@@ -2,14 +2,16 @@ import mongoose, { Schema } from "mongoose";
 
 const ConversationSchema = new Schema(
     {
-        recipe: {
-            recipeId: { type: Schema.Types.ObjectId, required: true },
-            name: { type: String, required: true },
-            imageLink: { type: String, required: true },
-            isLatest: { type: Boolean, default: true }
-        },
+        recipes: [
+            {
+                recipeId: { type: Schema.Types.ObjectId, required: true },
+                name: { type: String, required: true },
+                imageLink: { type: String, required: true },
+                isLatest: { type: Boolean, default: true }
+            }
+        ],
         author: {
-            userId: { type: Schema.Types.ObjectId, required: true },
+            authorId: { type: Schema.Types.ObjectId, required: true },
             name: { type: String, required: true }
         },
         inquirerId: { type: Schema.Types.ObjectId, requried: true },
