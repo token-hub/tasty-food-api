@@ -40,8 +40,8 @@ class RecipeController {
 
     getRecipe = async (req, res, next) => {
         try {
-            const recipeId = req.params?.recipeId;
-            const recipe = await this.service.getRecipe(recipeId);
+            const data = req.params;
+            const recipe = await this.service.getRecipe(data);
             res.status(200).json({
                 status: "success",
                 data: recipe
