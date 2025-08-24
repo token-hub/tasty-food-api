@@ -11,6 +11,7 @@ import { logErrors } from "./middlewares/errors/logErrors.js";
 
 import recipeRoutes from "./modules/recipe/index.js";
 import ratingRoutes from "./modules/rating/index.js";
+import conversationRoutes from "./modules/conversation/index.js";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(cors());
 // routes
 app.use("/api/recipes", recipeRoutes);
 app.use("/api/ratings", ratingRoutes);
+app.use("/api/conversations", conversationRoutes);
 
 app.use(logErrors);
 app.use(multipleErrorsHandler);
