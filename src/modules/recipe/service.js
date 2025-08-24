@@ -31,6 +31,10 @@ class RecipeService {
         if (data.recipeId) {
             data.recipeId = new ObjectId(data.recipeId);
         }
+
+        if (data.author && data.author.userId) {
+            data.author.userId = new ObjectId(data.author.userId);
+        }
     }
 
     getQueryAllRecipes(data) {
@@ -98,9 +102,7 @@ class RecipeService {
 
     createRecipe(data) {
         // implement business logic
-        if (data?.author?.userId) {
-            data.author.userId = new ObjectId(data.author.userId);
-        }
+        this.transformData(data);
 
         return this.model.create(data);
     }
