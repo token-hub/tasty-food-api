@@ -91,13 +91,12 @@ class RecipeService {
         return this.model.countDocuments();
     }
 
-    getRecipe(recipeId) {
-        if (!recipeId) {
+    getRecipe(data) {
+        if (!data.recipeId) {
             throw new Error("Recipe Id is missing");
         }
-
-        const id = new ObjectId(recipeId);
-        return this.model.findById(id);
+        this.transformData(data);
+        return this.model.findById({ _id: data.recipeId });
     }
 
     createRecipe(data) {
