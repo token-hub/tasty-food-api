@@ -69,8 +69,7 @@ class RecipeService {
             .find(query)
             .sort({ [sortBy]: order })
             .skip(skip)
-            .limit(limit)
-            .explain();
+            .limit(limit);
 
         return {
             recipes,
