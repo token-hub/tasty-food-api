@@ -27,6 +27,12 @@ class RecipeService {
         return this.#pagination;
     }
 
+    transformData(data) {
+        if (data.recipeId) {
+            data.recipeId = new ObjectId(data.recipeId);
+        }
+    }
+
     getQueryAllRecipes(data) {
         const { limit, cursor, page, order } = this.paginationData;
         const { filters } = data;
@@ -99,17 +105,25 @@ class RecipeService {
         return this.model.create(data);
     }
 
-    updateRecipe(recipeId, data) {
-        if (!recipeId) {
+    updateRecipe(data) {
+        if (!data.recipeId) {
             throw new Error("Recipe Id is missing");
         }
 
-        const id = new ObjectId(recipeId);
+        this.transformData(data);
+        const recipeId = data.recipeId;
+        delete data.recipeId;
 
-        return this.model.findByIdAndUpdate(id, data, {
-            runValidators: true,
-            returnDocument: "after"
-        });
+        return this.model.findByIdAndUpdate(
+            { _id: recipeId },
+            {
+                $set: data
+            },
+            {
+                runValidators: true,
+                returnDocument: "after"
+            }
+        );
     }
 }
 
