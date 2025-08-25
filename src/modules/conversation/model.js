@@ -10,11 +10,12 @@ const ConversationSchema = new Schema(
                 isLatest: { type: Boolean, default: true }
             }
         ],
-        author: {
-            authorId: { type: Schema.Types.ObjectId, required: true },
-            name: { type: String, required: true }
-        },
-        inquirerId: { type: Schema.Types.ObjectId, requried: true },
+        participants: [
+            {
+                name: { type: String, required: true },
+                userId: { type: Schema.Types.ObjectId, required: true }
+            }
+        ],
         messages: [
             {
                 messageId: { type: Schema.Types.ObjectId, required: true },
@@ -25,10 +26,10 @@ const ConversationSchema = new Schema(
             }
         ]
     },
-    { timestamp: true }
+    { timestamps: true }
 );
 
-ConversationSchema.index({ "recipe.recipeId": -1, "author.authorId": -1, inquirerId: -1 });
+ConversationSchema.index({ "participants.userId": -1, updatedAt: -1 });
 
 const ConversationModel = mongoose.model("Conversation", ConversationSchema);
 
