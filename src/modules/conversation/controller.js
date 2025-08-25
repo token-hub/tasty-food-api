@@ -24,6 +24,19 @@ class ConversationController {
             next(error);
         }
     };
+
+    getConversations = async (req, res, next) => {
+        try {
+            const data = req.body;
+            const conversations = await this.service.getConversations(data);
+            return res.status(200).json({
+                status: "Success",
+                details: conversations
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new ConversationController();
