@@ -126,7 +126,7 @@ class ConversationService {
         ).lean();
     }
 
-    static async updateConversationMessages(conversationId, message, session) {
+    static async updateConversationMessages({ conversationId, message, session, limit }) {
         if (!conversationId) return;
 
         const conversation = await ConversationModel.findOne({ _id: conversationId }).lean();
@@ -138,7 +138,7 @@ class ConversationService {
         const messages = conversation.messages;
         const newMessages = [...messages, message];
 
-        if (newMessages.length > 5) {
+        if (newMessages.length > limit) {
             newMessages.shift();
         }
 
