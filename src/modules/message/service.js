@@ -1,13 +1,14 @@
 import MessageModel from "./model.js";
 import { ObjectId } from "mongodb";
 import ControllerService from "../conversation/service.js";
+import { sessionWrapper } from "../../utils/session.js";
+import mongoose from "mongoose";
 
 class MessageService {
     #model;
 
     constructor() {
         this.#model = MessageModel;
-        this.controllerService = new ControllerService();
     }
 
     #pagination = {
@@ -28,6 +29,10 @@ class MessageService {
 
         if (data.recipeId) {
             data.recipeId = new ObjectId(data.recipeId);
+        }
+
+        if (data.userId) {
+            data.userId = new ObjectId(data.userId);
         }
     }
 
@@ -76,6 +81,27 @@ class MessageService {
             .explain();
 
         return explain;
+    }
+
+    async createMessage(data) {
+        this.transformData(data);
+
+        return sessionWrapper(async (session) => {
+            const message = await this.model.create([data], { session });
+            await ControllerService.updateConversationMessages(
+                data.conversationId,
+                {
+                    messageId: message[0]._id,
+                    message: data.message,
+                    userId: data.userId,
+                    recipeId: data.recipeId,
+                    isRead: false
+                },
+                session
+            );
+
+            return message;
+        });
     }
 }
 
