@@ -86,9 +86,9 @@ class MessageService {
 
         return sessionWrapper(async (session) => {
             const message = await this.model.create([data], { session });
-            await ControllerService.updateConversationMessages(
-                data.conversationId,
-                {
+            await ControllerService.updateConversationMessages({
+                conversationId: data.conversationId,
+                message: {
                     messageId: message[0]._id,
                     message: data.message,
                     userId: data.userId,
@@ -96,8 +96,9 @@ class MessageService {
                     isRead: false,
                     updatedAt: message[0].updatedAt.toISOString()
                 },
+                limit: this.paginationData.limit,
                 session
-            );
+            });
 
             return message;
         });
