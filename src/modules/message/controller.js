@@ -24,6 +24,20 @@ class MessageController {
             next(error);
         }
     };
+
+    createMessage = async (req, res, next) => {
+        try {
+            const data = req.body;
+            const message = await this.service.createMessage(data);
+
+            return res.status(201).json({
+                status: "Success",
+                details: message
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new MessageController();
