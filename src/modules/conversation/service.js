@@ -139,7 +139,7 @@ class ConversationService {
         const newMessages = [...messages, message];
 
         if (newMessages.length > 5) {
-            newMessages.unshift();
+            newMessages.shift();
         }
 
         return ConversationModel.updateOne(
