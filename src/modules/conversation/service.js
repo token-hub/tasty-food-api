@@ -67,16 +67,6 @@ class ConversationService {
             .lean();
     }
 
-    static getConversationById(conversationId, projection) {
-        if (!conversationId) return;
-        return ConversationModel.findOne(
-            {
-                _id: conversationId
-            },
-            projection
-        ).lean();
-    }
-
     updateConversationRecipeTopics(conversation, newRecipe) {
         const existingRecipeTopics = conversation.recipes.map((recipe) => {
             return {
@@ -124,6 +114,41 @@ class ConversationService {
 
         let query = this.getConversationQuery(data);
         return await this.model.find(query).sort({ updatedAt: -1 }).limit(this.paginationData.limit);
+    }
+
+    static getConversationById(conversationId, projection) {
+        if (!conversationId) return;
+        return ConversationModel.findOne(
+            {
+                _id: conversationId
+            },
+            projection
+        ).lean();
+    }
+
+    static async updateConversationMessages(conversationId, message, session) {
+        if (!conversationId) return;
+
+        const conversation = await ConversationModel.findOne({ _id: conversationId }).lean();
+
+        if (!conversation) {
+            throw new Error("Cannot fine the conversation");
+        }
+
+        const messages = conversation.messages;
+        const newMessages = [...messages, message];
+
+        if (newMessages.length > 5) {
+            newMessages.unshift();
+        }
+
+        return ConversationModel.updateOne(
+            {
+                _id: conversationId
+            },
+            { $set: { messages: newMessages } },
+            { session }
+        );
     }
 }
 
