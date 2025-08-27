@@ -95,7 +95,8 @@ class MessageService {
                     message: data.message,
                     userId: data.userId,
                     recipeId: data.recipeId,
-                    isRead: false
+                    isRead: false,
+                    updatedAt: message[0].updatedAt.toISOString()
                 },
                 session
             );
