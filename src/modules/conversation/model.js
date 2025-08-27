@@ -19,7 +19,7 @@ const ConversationSchema = new Schema(
         messages: [
             {
                 messageId: { type: Schema.Types.ObjectId, required: true },
-                message: { type: String, require: true },
+                message: { type: String, required: true },
                 userId: { type: Schema.Types.ObjectId, required: true },
                 recipeId: { type: Schema.Types.ObjectId, required: true },
                 isRead: { type: Boolean, default: false }
