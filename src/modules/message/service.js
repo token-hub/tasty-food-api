@@ -13,7 +13,7 @@ class MessageService {
 
     #pagination = {
         cursor: "",
-        limit: 6,
+        limit: 5,
         sortBy: "updatedAt",
         order: -1
     };
@@ -52,7 +52,7 @@ class MessageService {
         }
 
         if (conversation.messages.length) {
-            const lastMessageShowned = conversation.messages[conversation.messages.length - 1];
+            const lastMessageShowned = conversation.messages[0];
             this.paginationData = { cursor: new Date(lastMessageShowned.updatedAt) };
         }
 
@@ -77,9 +77,7 @@ class MessageService {
         const explain = await this.model
             .find(query)
             .sort({ [sortBy]: order })
-            .limit(limit)
-            .explain();
-
+            .limit(limit);
         return explain;
     }
 
