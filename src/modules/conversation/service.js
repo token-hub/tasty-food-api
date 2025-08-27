@@ -1,4 +1,3 @@
-import e from "express";
 import ConversationModel from "./model.js";
 import { ObjectId } from "mongodb";
 
@@ -66,6 +65,16 @@ class ConversationService {
                 }
             })
             .lean();
+    }
+
+    static getConversationById(conversationId, projection) {
+        if (!conversationId) return;
+        return ConversationModel.findOne(
+            {
+                _id: conversationId
+            },
+            projection
+        ).lean();
     }
 
     updateConversationRecipeTopics(conversation, newRecipe) {
