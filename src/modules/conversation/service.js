@@ -1,8 +1,10 @@
 import ConversationModel from "./model.js";
 import { ObjectId } from "mongodb";
+import MessageService from "../message/service.js";
 
 class ConversationService {
     #model;
+    #messageService;
     #pagination = {
         cursor: "",
         limit: 6
@@ -10,6 +12,7 @@ class ConversationService {
 
     constructor() {
         this.#model = ConversationModel;
+        this.#messageService = new MessageService();
     }
 
     get model() {
@@ -22,6 +25,10 @@ class ConversationService {
 
     get paginationData() {
         return this.#pagination;
+    }
+
+    get messageService() {
+        return this.#messageService;
     }
 
     transformData(data) {
@@ -53,6 +60,14 @@ class ConversationService {
         if (data.userId) {
             data.userId = new ObjectId(data.userId);
         }
+
+        if (data.conversationId) {
+            data.conversationId = new ObjectId(data.conversationId);
+        }
+
+        if (data.recipeId) {
+            data.recipeId = new ObjectId(data.recipeId);
+        }
     }
 
     getConversation(data) {
@@ -65,6 +80,40 @@ class ConversationService {
                 }
             })
             .lean();
+    }
+
+    async updateConvoRecipeAndMessages(data) {
+        // add validation
+        this.transformData(data);
+
+        const conversation = await ConversationService.getConversationById(data.conversationId);
+
+        if (!conversation) {
+            throw new Error("Cannot find conversation");
+        }
+
+        const latestMessages = await this.messageService.getMessages({
+            conversationId: data.conversationId,
+            recipeId: data.recipeId,
+            skipFirstConvoMessages: false
+        });
+
+        const updatedRecipes = conversation.recipes.map((recipe) => {
+            if (recipe.recipeId.equals(data.recipeId)) {
+                return {
+                    ...recipe,
+                    isLatest: true
+                };
+            } else {
+                return {
+                    ...recipe,
+                    isLatest: false
+                };
+            }
+        });
+
+        const query = { $set: { recipes: updatedRecipes, messages: latestMessages } };
+        return this.model.findOneAndUpdate({ _id: conversation._id }, query, { new: true });
     }
 
     updateConversationRecipeTopics(conversation, newRecipe) {
