@@ -13,6 +13,7 @@ import recipeRoutes from "./modules/recipe/index.js";
 import ratingRoutes from "./modules/rating/index.js";
 import conversationRoutes from "./modules/conversation/index.js";
 import messageRoutes from "./modules/message/index.js";
+import notificationRoutes from "./modules/notification/index.js";
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use("/api/recipes", recipeRoutes);
 app.use("/api/ratings", ratingRoutes);
 app.use("/api/conversations", conversationRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use(logErrors);
 app.use(multipleErrorsHandler);
