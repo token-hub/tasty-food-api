@@ -23,6 +23,19 @@ class NotificationController {
             next(error);
         }
     };
+
+    getNotifications = async (req, res, next) => {
+        try {
+            const data = req.body;
+            const notifications = await this.service.getNotifications(data);
+            return res.status(201).json({
+                status: "Success",
+                details: notifications
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new NotificationController();
