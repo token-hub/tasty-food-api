@@ -15,7 +15,12 @@ const NotificationSchema = new Schema(
     },
     { timestamps: true }
 );
+
+// For "get all messages sorted by updatedAt"
 NotificationSchema.index({ userId: -1, isRead: -1, updatedAt: -1 });
+
+// For "get only unread messages"
+NotificationSchema.index({ userId: -1, updatedAt: -1 });
 
 const NotificationModel = mongoose.model("Notification", NotificationSchema);
 
