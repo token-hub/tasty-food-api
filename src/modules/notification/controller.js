@@ -62,6 +62,19 @@ class NotificationController {
             next(error);
         }
     };
+
+    markAllUnReadNotifToRead = async (req, res, next) => {
+        try {
+            const data = req.params;
+            const updatedNotifications = await this.service.markAllUnReadNotifToRead(data);
+            return res.status(200).json({
+                status: "Success",
+                details: updatedNotifications
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new NotificationController();
