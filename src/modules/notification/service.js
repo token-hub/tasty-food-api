@@ -1,5 +1,6 @@
 import NotificationModel from "./model.js";
 import { ObjectId } from "mongodb";
+import { sessionWrapper } from "../../utils/session.js";
 
 class NotificationService {
     #model;
@@ -105,10 +106,16 @@ class NotificationService {
                 }
             },
             {
-                runValidators: true,
                 new: true
             }
         );
+    }
+
+    async markAllUnReadNotifToRead(data) {
+        this.transformData(data);
+        return sessionWrapper(async (session) => {
+            return this.model.updateMany({ userId: data.userId, isRead: false }, { $set: { isRead: true } }, { session });
+        });
     }
 }
 
