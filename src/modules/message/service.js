@@ -45,15 +45,17 @@ class MessageService {
     }
 
     async getMessagesQuery(data) {
-        const conversation = await ControllerService.getConversationById(data.conversationId, { messages: 1, _id: 0 });
+        if (data.skipFirstConvoMessages) {
+            const conversation = await ControllerService.getConversationById(data.conversationId, { messages: 1, _id: 0 });
 
-        if (!conversation) {
-            throw new Error("Cannot find conversation");
-        }
+            if (!conversation) {
+                throw new Error("Cannot find conversation");
+            }
 
-        if (conversation.messages.length) {
-            const lastMessageShowned = conversation.messages[0];
-            this.paginationData = { cursor: new Date(lastMessageShowned.updatedAt) };
+            if (conversation.messages.length) {
+                const lastMessageShowned = conversation.messages[0];
+                this.paginationData = { cursor: new Date(lastMessageShowned.updatedAt) };
+            }
         }
 
         const query = {
