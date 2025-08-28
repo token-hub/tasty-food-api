@@ -35,6 +35,10 @@ class NotificationService {
             this.paginationData = data.pagination;
             delete data.pagination;
         }
+
+        if (data.notificationId) {
+            data.notificationId = new ObjectId(data.notificationId);
+        }
     }
 
     createNotification(data) {
@@ -61,6 +65,7 @@ class NotificationService {
     }
 
     async getNotifications(data) {
+        // add validation
         this.transformData(data);
 
         const query = this.getNotificationsQuery(data);
@@ -72,12 +77,39 @@ class NotificationService {
     }
 
     getUnReadNotificationsCount(data) {
+        // add validation
         this.transformData(data);
         const query = this.getNotificationsQuery(data, true);
         return this.model.countDocuments(query);
     }
 
-    updateNotification() {}
+    getNotification(notificationId) {
+        return this.model.findOne({ _id: notificationId }).lean();
+    }
+
+    async updateNotificationIsRead(data) {
+        // add validation
+        this.transformData(data);
+
+        const notification = await this.getNotification(data.notificationId);
+
+        if (!notification) {
+            throw new Error("Cannot find notification");
+        }
+
+        return this.model.findOneAndUpdate(
+            { _id: notification._id },
+            {
+                $set: {
+                    isRead: true
+                }
+            },
+            {
+                runValidators: true,
+                new: true
+            }
+        );
+    }
 }
 
 export default NotificationService;
