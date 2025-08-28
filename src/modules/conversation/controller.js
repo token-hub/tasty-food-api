@@ -37,6 +37,20 @@ class ConversationController {
             next(error);
         }
     };
+
+    updateConvoRecipeAndMessages = async (req, res, next) => {
+        try {
+            const data = req.body;
+            data.conversationId = req.params.conversationId;
+            const conversation = await this.service.updateConvoRecipeAndMessages(data);
+            return res.status(200).json({
+                status: "Success",
+                details: conversation
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new ConversationController();
