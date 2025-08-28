@@ -44,10 +44,14 @@ class NotificationService {
         return this.model.create(data);
     }
 
-    getNotificationsQuery(data) {
+    getNotificationsQuery(data, isUnreadOnly = false) {
         const query = {
             userId: data.userId
         };
+
+        if (isUnreadOnly) {
+            query.isRead = false;
+        }
 
         if (this.paginationData.cursor) {
             query.updatedAt = { $lt: new Date(this.paginationData.cursor) };
@@ -67,7 +71,11 @@ class NotificationService {
             .limit(limit);
     }
 
-    getUnReadNotificationsCount() {}
+    getUnReadNotificationsCount(data) {
+        this.transformData(data);
+        const query = this.getNotificationsQuery(data, true);
+        return this.model.countDocuments(query);
+    }
 
     updateNotification() {}
 }
