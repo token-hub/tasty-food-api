@@ -36,6 +36,19 @@ class NotificationController {
             next(error);
         }
     };
+
+    getUnreadNotificationsCount = async (req, res, next) => {
+        try {
+            const data = req.params;
+            const notificationCount = await this.service.getUnReadNotificationsCount(data);
+            return res.status(201).json({
+                status: "Success",
+                details: { unreadNotifications: notificationCount }
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new NotificationController();
