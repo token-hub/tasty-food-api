@@ -28,7 +28,7 @@ class NotificationController {
         try {
             const data = req.body;
             const notifications = await this.service.getNotifications(data);
-            return res.status(201).json({
+            return res.status(200).json({
                 status: "Success",
                 details: notifications
             });
@@ -41,9 +41,22 @@ class NotificationController {
         try {
             const data = req.params;
             const notificationCount = await this.service.getUnReadNotificationsCount(data);
-            return res.status(201).json({
+            return res.status(200).json({
                 status: "Success",
                 details: { unreadNotifications: notificationCount }
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    updateNotificationIsRead = async (req, res, next) => {
+        try {
+            const data = req.params;
+            const updatedNotification = await this.service.updateNotificationIsRead(data);
+            return res.status(200).json({
+                status: "Success",
+                details: updatedNotification
             });
         } catch (error) {
             next(error);
