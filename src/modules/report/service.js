@@ -34,6 +34,15 @@ class ReportService {
         if (data.reporter && data.reporter.reporterId) {
             data.reporter.reporterId = new ObjectId(data.reporter.reporterId);
         }
+
+        if (data.userId) {
+            data.userId = new ObjectId(data.userId);
+        }
+
+        if (data.pagination) {
+            this.paginationData = data.pagination;
+            delete data.pagination;
+        }
     }
 
     async createReport(data) {
@@ -50,10 +59,6 @@ class ReportService {
         return this.model.create(data);
     }
 
-    getReports(data) {
-        this.transformData(data);
-    }
-
     getReportByReporterId(recipeId, reporterId) {
         if (!reporterId || !recipeId) {
             throw new Error("reporter/recipe id is missing");
@@ -61,6 +66,31 @@ class ReportService {
 
         const query = { "reporter.reporterId": reporterId };
         return this.model.findOne(query).lean();
+    }
+
+    getReportsQuery(data) {
+        const query = {
+            recipeId: data.recipeId,
+            userId: data.userId
+        };
+
+        if (this.paginationData.cursor) {
+            query.updatedAt = { $lt: new Date(this.paginationData.cursor) };
+        }
+
+        return query;
+    }
+
+    async getReports(data) {
+        // add validation
+        this.transformData(data);
+
+        const query = this.getReportsQuery(data);
+        const { sortBy, order, limit } = this.paginationData;
+        return this.model
+            .find(query)
+            .sort({ [sortBy]: order })
+            .limit(limit);
     }
 }
 
