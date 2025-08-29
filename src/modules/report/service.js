@@ -36,13 +36,31 @@ class ReportService {
         }
     }
 
-    createReport(data) {
+    async createReport(data) {
         // add validation here
         this.transformData(data);
 
         // check first if the reporter already reported the recipe;
+        const hasReport = await this.getReportByReporterId(data.recipeId, data.reporter.reporterId);
+
+        if (hasReport) {
+            return "You already reported this recipe, Thank you for reporting";
+        }
 
         return this.model.create(data);
+    }
+
+    getReports(data) {
+        this.transformData(data);
+    }
+
+    getReportByReporterId(recipeId, reporterId) {
+        if (!reporterId || !recipeId) {
+            throw new Error("reporter/recipe id is missing");
+        }
+
+        const query = { "reporter.reporterId": reporterId };
+        return this.model.findOne(query).lean();
     }
 }
 
