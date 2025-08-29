@@ -15,7 +15,7 @@ class ReportController {
         try {
             const userData = req.body;
             const newReport = await this.service.createReport(userData);
-            return res.status(200).json({
+            return res.status(201).json({
                 status: "Success",
                 details: newReport
             });
