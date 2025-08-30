@@ -15,6 +15,7 @@ import conversationRoutes from "./modules/conversation/index.js";
 import messageRoutes from "./modules/message/index.js";
 import notificationRoutes from "./modules/notification/index.js";
 import reportRoutes from "./modules/report/index.js";
+import userRoutes from "./modules/user/index.js";
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use("/api/conversations", conversationRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/users", userRoutes);
 
 app.use(logErrors);
 app.use(multipleErrorsHandler);
