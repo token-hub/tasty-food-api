@@ -41,6 +41,20 @@ class UserController {
             next(error);
         }
     };
+
+    getUser = async (req, res, next) => {
+        try {
+            const data = req.params;
+            const user = await this.service.getUser(data);
+
+            return res.status(200).json({
+                status: "Success",
+                details: user
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new UserController();
