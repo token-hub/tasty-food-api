@@ -38,7 +38,12 @@ class UserService {
             { new: true, runValidators: true }
         );
     }
-    getUser() {}
+
+    getUser(data) {
+        this.transformData(data);
+
+        return this.model.findOne({ _id: data.userId }).lean();
+    }
 
     // login() {}
     // logout() {}
