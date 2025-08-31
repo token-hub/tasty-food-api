@@ -1,4 +1,5 @@
 import UserModel from "./model.js";
+import { ObjectId } from "mongodb";
 
 class UserService {
     #model;
@@ -11,7 +12,11 @@ class UserService {
         return this.#model;
     }
 
-    transformData(data) {}
+    transformData(data) {
+        if (data.userId) {
+            data.userId = new ObjectId(data.userId);
+        }
+    }
 
     createUser(data) {
         // add validation
@@ -21,7 +26,18 @@ class UserService {
         return user;
     }
 
-    updateUser() {}
+    updateUser(data) {
+        // add validations
+        this.transformData(data);
+
+        return this.model.findOneAndUpdate(
+            {
+                _id: data.userId
+            },
+            { $set: data },
+            { new: true, runValidators: true }
+        );
+    }
     getUser() {}
 
     // login() {}
