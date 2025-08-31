@@ -44,11 +44,6 @@ class UserService {
 
         return this.model.findOne({ _id: data.userId }).lean();
     }
-
-    // login() {}
-    // logout() {}
-    // resendVerification() {}
-    // verifyUser() {}
 }
 
 export default UserService;
