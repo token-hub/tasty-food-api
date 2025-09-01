@@ -8,5 +8,17 @@ export const auth = betterAuth({
     database: mongodbAdapter(db),
     emailAndPassword: {
         enabled: true
+    },
+    user: {
+        modelName: "users"
+    },
+    session: {
+        modelName: "sessions"
+    },
+    account: {
+        modelName: "accounts"
+    },
+    verification: {
+        modelName: "verifications"
     }
 });
