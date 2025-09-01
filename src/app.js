@@ -16,13 +16,19 @@ import messageRoutes from "./modules/message/index.js";
 import notificationRoutes from "./modules/notification/index.js";
 import reportRoutes from "./modules/report/index.js";
 import userRoutes from "./modules/user/index.js";
+import authRoutes from "./modules/auth/index.js";
 
 const app = express();
 
 // Middleware configuration
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors());
+app.use(
+    cors({
+        origin: process.env.CLIENT_URL,
+        credentials: true
+    })
+);
 
 // routes
 app.use("/api/recipes", recipeRoutes);
@@ -32,6 +38,7 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 
 app.use(logErrors);
 app.use(multipleErrorsHandler);
