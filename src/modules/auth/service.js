@@ -11,12 +11,21 @@ class AuthService {
         return this.#auth;
     }
 
-    async signUp(data) {
+    signUp(data) {
         // add validation
         // data should have, name, email, and password
 
         return this.auth.api.signUpEmail({
             body: data
+        });
+    }
+
+    login(data, headers) {
+        // add validation, make sure that headers is present
+        // email and password must be present too
+        return this.auth.api.signInEmail({
+            body: data,
+            headers
         });
     }
 }
