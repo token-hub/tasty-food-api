@@ -24,11 +24,24 @@ class AuthController {
         }
     };
 
-    login = async (req, res, next) => {
+    signIn = async (req, res, next) => {
         try {
             const data = req.body;
             const headers = req.headers;
-            const result = await this.service.login(data, headers);
+            const result = await this.service.signIn(data, headers);
+            return res.status(200).json({
+                status: "Success",
+                details: result
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    signOut = async (req, res, next) => {
+        try {
+            const headers = req.headers;
+            const result = await this.service.signOut(headers);
             return res.status(200).json({
                 status: "Success",
                 details: result
