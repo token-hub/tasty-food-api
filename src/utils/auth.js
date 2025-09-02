@@ -9,6 +9,13 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true
     },
+    advanced: {
+        defaultCookieAttributes: {
+            sameSite: "none",
+            secure: true
+        }
+    },
+    trustedOrigins: [process.env.CLIENT_URL],
     user: {
         modelName: "users"
     },
