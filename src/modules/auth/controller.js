@@ -28,10 +28,15 @@ class AuthController {
         try {
             const data = req.body;
             const headers = req.headers;
-            const result = await this.service.signIn(data, headers);
+            const { setCookie, response } = await this.service.signIn(data, headers);
+
+            if (setCookie) {
+                res.setHeader("Set-Cookie", setCookie);
+            }
+
             return res.status(200).json({
                 status: "Success",
-                details: result
+                details: response
             });
         } catch (error) {
             next(error);
@@ -41,10 +46,15 @@ class AuthController {
     signOut = async (req, res, next) => {
         try {
             const headers = req.headers;
-            const result = await this.service.signOut(headers);
+            const { setCookie, response } = await this.service.signOut(headers);
+
+            if (setCookie) {
+                res.setHeader("Set-Cookie", setCookie);
+            }
+
             return res.status(200).json({
                 status: "Success",
-                details: result
+                details: response
             });
         } catch (error) {
             next(error);
