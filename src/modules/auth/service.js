@@ -20,18 +20,26 @@ class AuthService {
         });
     }
 
-    signIn(data, headers) {
+    async signIn(data, headers) {
         // add validation, make sure that headers is present
         // email and password must be present too
-        return this.auth.api.signInEmail({
+        const result = await this.auth.api.signInEmail({
+            returnHeaders: true,
             body: data,
             headers
         });
+
+        const setCookie = result.headers.get("set-cookie");
+
+        return { setCookie, response: result.response };
     }
 
-    signOut(headers) {
+    async signOut(headers) {
         // add validation, make sure that headers is present
-        return this.auth.api.signOut({ headers });
+        const result = await this.auth.api.signOut({ headers, returnHeaders: true });
+        const setCookie = result.headers.get("set-cookie");
+
+        return { setCookie, response: result.response };
     }
 }
 
