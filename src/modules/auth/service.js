@@ -20,13 +20,18 @@ class AuthService {
         });
     }
 
-    login(data, headers) {
+    signIn(data, headers) {
         // add validation, make sure that headers is present
         // email and password must be present too
         return this.auth.api.signInEmail({
             body: data,
             headers
         });
+    }
+
+    signOut(headers) {
+        // add validation, make sure that headers is present
+        return this.auth.api.signOut({ headers });
     }
 }
 
