@@ -85,6 +85,19 @@ class AuthController {
             next(error);
         }
     };
+
+    getSession = async (req, res, next) => {
+        try {
+            const headers = req.headers;
+            const session = await this.service.getSession(headers);
+            return res.status(200).json({
+                status: "Success",
+                details: session
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new AuthController();
