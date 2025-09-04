@@ -9,10 +9,12 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
         sendResetPassword: async ({ user, url, token }, request) => {
+            const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+
             await sendEmail({
                 to: user.email,
                 subject: "Reset your password",
-                text: `Click the link to reset your password: ${url}`
+                text: `Click the link to reset your password: ${resetUrl}`
             });
         },
         onPasswordReset: async ({ user }, request) => {
