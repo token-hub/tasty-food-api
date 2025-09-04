@@ -59,6 +59,10 @@ class AuthService {
             }
         });
     }
+
+    async getSession(headers) {
+        return this.auth.api.getSession({ headers });
+    }
 }
 
 export default AuthService;
