@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import client from "./db/db.js";
-
+import { sendEmail } from "./email.js";
 const db = client.db(process.env.MONGODB_DATABASE);
 
 export const auth = betterAuth({
@@ -27,5 +27,14 @@ export const auth = betterAuth({
     },
     verification: {
         modelName: "verifications"
+    },
+    emailVerification: {
+        sendVerificationEmail: async ({ user, url, token }, request) => {
+            await sendEmail({
+                to: user.email,
+                subject: "Verify your email address",
+                text: `Click the link to verify your email: ${url}`
+            });
+        }
     }
 });
