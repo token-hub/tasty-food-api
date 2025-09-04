@@ -41,6 +41,24 @@ class AuthService {
 
         return { setCookie, response: result.response };
     }
+
+    async sendEmailVerification(data) {
+        // add validation, make sure email is present
+        const result = await this.auth.api.sendVerificationEmail({
+            body: { email: data.email, callbackURL: data.callbackURL }
+        });
+
+        return result;
+    }
+
+    async verifyEmail(data) {
+        // add validation, make sure the token is present
+        return this.auth.api.verifyEmail({
+            query: {
+                token: data.token
+            }
+        });
+    }
 }
 
 export default AuthService;
