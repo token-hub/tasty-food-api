@@ -7,7 +7,17 @@ const db = client.db(process.env.MONGODB_DATABASE);
 export const auth = betterAuth({
     database: mongodbAdapter(db),
     emailAndPassword: {
-        enabled: true
+        enabled: true,
+        sendResetPassword: async ({ user, url, token }, request) => {
+            await sendEmail({
+                to: user.email,
+                subject: "Reset your password",
+                text: `Click the link to reset your password: ${url}`
+            });
+        },
+        onPasswordReset: async ({ user }, request) => {
+            console.log(`Password for user ${user.email} has been reset.`);
+        }
     },
     advanced: {
         defaultCookieAttributes: {
