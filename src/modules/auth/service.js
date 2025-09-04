@@ -44,14 +44,12 @@ class AuthService {
 
     async sendEmailVerification(data) {
         // add validation, make sure email is present
-        const result = await this.auth.api.sendVerificationEmail({
-            body: { email: data.email, callbackURL: data.callbackURL }
+        return this.auth.api.sendVerificationEmail({
+            body: { email: data.email, callbackURL: `${process.env.CLIENT_URL}/emailVerified` }
         });
-
-        return result;
     }
 
-    async verifyEmail(data) {
+    verifyEmail(data) {
         // add validation, make sure the token is present
         return this.auth.api.verifyEmail({
             query: {
@@ -60,8 +58,15 @@ class AuthService {
         });
     }
 
-    async getSession(headers) {
+    getSession(headers) {
         return this.auth.api.getSession({ headers });
+    }
+
+    requestPasswordReset(data) {
+        // add validation to make sure, email and redirectTo is present
+        return this.auth.api.requestPasswordReset({
+            body: data
+        });
     }
 }
 
