@@ -60,6 +60,31 @@ class AuthController {
             next(error);
         }
     };
+
+    sendEmailVerification = async (req, res, next) => {
+        try {
+            const data = req.body;
+            const result = await this.service.sendEmailVerification(data);
+
+            return res.status(200).json({
+                status: "Success",
+                details: result
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    verifyEmail = async (req, res, next) => {
+        try {
+            const data = req.query;
+            await this.service.verifyEmail(data);
+            const redirect = `${process.env.CLIENT_URL}/emailVerified`;
+            return res.redirect(redirect);
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new AuthController();
