@@ -111,6 +111,19 @@ class AuthController {
             next(error);
         }
     };
+
+    passwordReset = async (req, res, next) => {
+        try {
+            const data = req.body;
+            const reset = await this.service.passwordReset(data);
+            return res.status(200).json({
+                status: "Success",
+                details: reset
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new AuthController();
