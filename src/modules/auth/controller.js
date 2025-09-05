@@ -128,7 +128,8 @@ class AuthController {
     changePassword = async (req, res, next) => {
         try {
             const data = req.body;
-            const result = await this.service.changePassword(data);
+            const headers = req.headers;
+            const result = await this.service.changePassword(data, headers);
             return res.status(200).json({
                 status: "Success",
                 details: result
