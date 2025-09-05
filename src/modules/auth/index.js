@@ -10,6 +10,7 @@ router.get("/verifyEmail", AuthController.verifyEmail);
 router.post("/requestResetPassword", AuthController.requestPasswordReset);
 router.post("/resetPassword", AuthController.passwordReset);
 router.post("/changePassword", AuthController.changePassword);
+router.post("/updateUser", AuthController.updateUser);
 router.get("/getSession", AuthController.getSession);
 
 export default router;
