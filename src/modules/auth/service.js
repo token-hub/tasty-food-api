@@ -79,6 +79,18 @@ class AuthService {
             }
         });
     }
+
+    changePassword(data, headers) {
+        // add validation to make user, newPassword and currentPassword is present
+
+        return this.auth.api.changePassword({
+            body: {
+                ...data,
+                revokeOtherSessions: true
+            },
+            headers
+        });
+    }
 }
 
 export default AuthService;
