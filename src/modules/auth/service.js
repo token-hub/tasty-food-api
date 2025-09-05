@@ -83,9 +83,14 @@ class AuthService {
     changePassword(data, headers) {
         // add validation to make user, newPassword and currentPassword is present
 
+        if (data.password !== data.confirmPassword) {
+            throw new Error("New password and Confirm password must match");
+        }
+
         return this.auth.api.changePassword({
             body: {
-                ...data,
+                newPassword: data.password,
+                currentPassword: data.oldPassword,
                 revokeOtherSessions: true
             },
             headers
