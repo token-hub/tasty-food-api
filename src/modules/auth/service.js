@@ -45,7 +45,7 @@ class AuthService {
     async sendEmailVerification(data) {
         // add validation, make sure email is present
         return this.auth.api.sendVerificationEmail({
-            body: { email: data.email, callbackURL: `${process.env.CLIENT_URL}/emailVerified` }
+            body: { email: data.email, callbackURL: `${process.env.CLIENT_URL}/auth/email-verified` }
         });
     }
 
