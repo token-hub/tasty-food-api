@@ -68,6 +68,17 @@ class AuthService {
             body: data
         });
     }
+
+    passwordReset(data) {
+        // add validation to make user, email and password is present
+
+        return this.auth.api.resetPassword({
+            body: {
+                newPassword: data.password,
+                token: data.token
+            }
+        });
+    }
 }
 
 export default AuthService;
