@@ -96,6 +96,19 @@ class AuthService {
             headers
         });
     }
+
+    updateUser(data, headers) {
+        // add validation to make sure name present
+
+        if (!data.name) {
+            throw new Error("Name must not be empty");
+        }
+
+        return this.auth.api.updateUser({
+            body: data,
+            headers
+        });
+    }
 }
 
 export default AuthService;
