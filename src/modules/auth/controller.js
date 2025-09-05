@@ -138,6 +138,20 @@ class AuthController {
             next(error);
         }
     };
+
+    updateUser = async (req, res, next) => {
+        try {
+            const data = req.body;
+            const headers = req.headers;
+            const result = await this.service.updateUser(data, headers);
+            return res.status(200).json({
+                status: "Success",
+                details: result
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new AuthController();
