@@ -31,6 +31,7 @@ const RecipeSchema = new Schema(
                 }
             }
         ],
+        instructions: [{ id: { type: String }, instruction: { type: String, required: true } }],
         prepTime: {
             hours: {
                 type: Number,
