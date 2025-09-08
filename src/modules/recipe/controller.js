@@ -54,8 +54,9 @@ class RecipeController {
     updateRecipe = async (req, res, next) => {
         try {
             const data = req.body;
+            const headers = req.headers;
             data.recipeId = req.params?.recipeId;
-            const recipe = await this.service.updateRecipe(data);
+            const recipe = await this.service.updateRecipe(data, headers);
             res.status(200).json({
                 status: "Recipe successfully updated",
                 data: recipe
