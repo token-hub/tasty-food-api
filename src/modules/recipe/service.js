@@ -60,7 +60,7 @@ class RecipeService {
             skip = isSkipPositive ? skip - 1 : 1;
         }
 
-        let query = {};
+        let query = { isArchive: Boolean(data?.isArchive) };
         if (cursor) {
             query.updatedAt = { [order == -1 ? "$lte" : "$gte"]: new Date(cursor) };
         }
