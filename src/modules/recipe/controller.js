@@ -18,7 +18,7 @@ class RecipeController {
             res.status(200).json({
                 status: "success",
                 message: "recipe created successfully.",
-                data: newRecipe
+                details: newRecipe
             });
         } catch (error) {
             next(error);
@@ -28,10 +28,10 @@ class RecipeController {
     getAllRecipes = async (req, res, next) => {
         try {
             const options = req.body;
-            const data = await this.service.getAllRecipes(options);
+            const details = await this.service.getAllRecipes(options);
             res.status(200).json({
                 status: "success",
-                data
+                details
             });
         } catch (error) {
             next(error);
@@ -44,7 +44,7 @@ class RecipeController {
             const recipe = await this.service.getRecipe(data);
             res.status(200).json({
                 status: "success",
-                data: recipe
+                details: recipe
             });
         } catch (error) {
             next(error);
@@ -59,7 +59,7 @@ class RecipeController {
             const recipe = await this.service.updateRecipe(data, headers);
             res.status(200).json({
                 status: "Recipe successfully updated",
-                data: recipe
+                details: recipe
             });
         } catch (error) {
             next(error);
