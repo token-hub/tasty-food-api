@@ -116,6 +116,7 @@ class RecipeService {
         const query = {};
         if (data) {
             this.transformData(data);
+            query.isArchive = data.isArchive;
             if (data.authorId) {
                 query["author.userId"] = data.authorId;
             }
