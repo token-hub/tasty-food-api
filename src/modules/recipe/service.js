@@ -51,6 +51,10 @@ class RecipeService {
         if (data.author && data.author.userId) {
             data.author.userId = new ObjectId(data.author.userId);
         }
+
+        if (data.authorId) {
+            data.authorId = new ObjectId(data.authorId);
+        }
     }
 
     getQueryAllRecipes(data) {
@@ -108,8 +112,16 @@ class RecipeService {
         };
     }
 
-    getTotalRecipe() {
-        return this.model.countDocuments();
+    getTotalRecipe(data) {
+        const query = {};
+        if (data) {
+            this.transformData(data);
+            if (data.authorId) {
+                query["author.userId"] = data.authorId;
+            }
+        }
+
+        return this.model.countDocuments(query);
     }
 
     getRecipe(data) {
