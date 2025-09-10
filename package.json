@@ -19,5 +19,8 @@
         "mongoose": "^8.17.2",
         "nodemailer": "^7.0.6",
         "tasty-food-api": "file:"
+    },
+    "devDependencies": {
+        "@faker-js/faker": "^10.0.0"
     }
 }
