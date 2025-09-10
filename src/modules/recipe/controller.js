@@ -68,7 +68,11 @@ class RecipeController {
 
     getTotalRecipesCount = async (req, res, next) => {
         try {
-            const count = await this.service.getTotalRecipe();
+            let data = {};
+            if (req.query?.authorId) {
+                data = req.query;
+            }
+            const count = await this.service.getTotalRecipe(data);
             res.status(200).json({
                 status: "Success",
                 details: { recipeTotalCount: count }
