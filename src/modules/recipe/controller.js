@@ -65,6 +65,18 @@ class RecipeController {
             next(error);
         }
     };
+
+    getTotalRecipesCount = async (req, res, next) => {
+        try {
+            const count = await this.service.getTotalRecipe();
+            res.status(200).json({
+                status: "Success",
+                details: { recipeTotalCount: count }
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new RecipeController();
