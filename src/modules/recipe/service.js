@@ -1,6 +1,7 @@
 import RecipeModel from "./model.js";
 import { ObjectId } from "mongodb";
 import AuthService from "../auth/service.js";
+import { faker } from "@faker-js/faker";
 
 class RecipeService {
     #model;
@@ -16,6 +17,7 @@ class RecipeService {
     constructor() {
         this.#model = RecipeModel;
         this.#authService = new AuthService();
+        this.init();
     }
 
     get authService() {
@@ -32,6 +34,13 @@ class RecipeService {
 
     get paginationData() {
         return this.#pagination;
+    }
+
+    async init() {
+        const total = await this.getTotalRecipe();
+        if (total < 2) {
+            this.createDummyData(20);
+        }
     }
 
     transformData(data) {
@@ -149,6 +158,72 @@ class RecipeService {
                 returnDocument: "after"
             }
         );
+    }
+
+    async createDummyData(count = 10) {
+        console.log("Creating dummy recipes");
+        const data = [];
+        const units = ["ounce/s", "piece/s", "liter/s"];
+
+        function getIngredients() {
+            const count = Math.floor(Math.random() * 10) + 1;
+            let newIngredients = [];
+
+            const ingredientsCount = Math.floor(Math.random() * count) + 1;
+
+            for (let ii = 0; ii < ingredientsCount; ii++) {
+                const ingredientToUse = faker.food.ingredient();
+                const ingredientExist = newIngredients.some((ing) => ing.name === ingredientToUse);
+                if (ingredientExist) continue;
+                const unitToUse = units[faker.number.int({ min: 0, max: units.length - 1 })];
+                const quantityToUse = faker.number.int({ min: 1, max: 10 });
+
+                newIngredients.push({
+                    name: ingredientToUse,
+                    unit: unitToUse,
+                    quantity: quantityToUse
+                });
+            }
+            return newIngredients;
+        }
+        function getInstructions() {
+            const instructions = [];
+            const instructionsCount = Math.floor(Math.random() * 10) + 1;
+            for (let i = 0; i < instructionsCount; i++) {
+                instructions.push({ id: faker.string.uuid(), instruction: faker.lorem.words(10) });
+            }
+            return instructions;
+        }
+
+        for (let i = 0; i < count; i++) {
+            let recipe = {
+                author: {
+                    name: "John",
+                    userId: "68a7287130e1273419856675"
+                },
+                ingredients: getIngredients(),
+                instructions: getInstructions(),
+                cookTime: {
+                    hours: faker.number.int({ min: 0, max: 2 }),
+                    minutes: faker.number.int({ min: 0, max: 60 })
+                },
+                prepTime: {
+                    hours: faker.number.int({ min: 0, max: 2 }),
+                    minutes: faker.number.int({ min: 0, max: 60 })
+                },
+                name: faker.food.dish(),
+                description: faker.food.description()
+            };
+            data.push(recipe);
+        }
+        console.log(data);
+
+        try {
+            await this.model.insertMany(data);
+            console.log("Done creating dummy recipes");
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 
