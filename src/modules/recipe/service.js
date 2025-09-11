@@ -55,6 +55,10 @@ class RecipeService {
         if (data.authorId) {
             data.authorId = new ObjectId(data.authorId);
         }
+
+        if (data.filters && typeof data.filters === "string") {
+            data.filters = JSON.parse(data.filters);
+        }
     }
 
     getQueryAllRecipes(data) {
@@ -119,6 +123,9 @@ class RecipeService {
             query.isArchive = data.isArchive;
             if (data.authorId) {
                 query["author.userId"] = data.authorId;
+            }
+            if (data?.filters?.length) {
+                query.categories = { $in: data.filters };
             }
         }
 
