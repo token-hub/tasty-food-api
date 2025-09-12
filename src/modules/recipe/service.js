@@ -90,6 +90,10 @@ class RecipeService {
             query.categories = { $in: data?.filters.categories };
         }
 
+        if (data?.query) {
+            query.name = { $regex: data?.query };
+        }
+
         return { query, skip };
     }
 
@@ -105,9 +109,10 @@ class RecipeService {
         const { sortBy, limit, order, page } = this.paginationData;
 
         const recipes = await this.model
-            .find(query)
+            .find(query, { author: 1, name: 1, image: 1, __v: -1 })
             .sort({ [sortBy]: order })
             .skip(skip)
+            .collation(data?.query ? { locale: "en", strength: 2 } : undefined)
             .limit(limit);
 
         return {
@@ -126,6 +131,9 @@ class RecipeService {
             }
             if (data?.filters?.length) {
                 query.categories = { $in: data.filters };
+            }
+            if (data?.query) {
+                query.name = { $eq: data.query };
             }
         }
 
