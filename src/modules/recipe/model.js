@@ -152,9 +152,10 @@ const RecipeSchema = new Schema(
     { timestamps: true }
 );
 
-RecipeSchema.index({ totalRatings: -1, updatedAt: -1 });
-RecipeSchema.index({ "author.userId": -1, updatedAt: -1 });
-RecipeSchema.index({ categories: -1, updatedAt: -1 });
+RecipeSchema.index({ "author.userId": -1, isArchive: -1, updatedAt: -1 });
+RecipeSchema.index({ isArchive: -1, categories: -1, updatedAt: -1 });
+RecipeSchema.index({ isArchive: -1, name: -1, updatedAt: -1 }, { collation: { locale: "en", strength: 2 } });
+RecipeSchema.index({ isArchive: -1, name: -1, categories: -1, updatedAt: -1 }, { collation: { locale: "en", strength: 2 } });
 
 const RecipeModel = mongoose.model("Recipe", RecipeSchema);
 
