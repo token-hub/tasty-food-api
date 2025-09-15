@@ -181,7 +181,7 @@ class ConversationService {
         const conversation = await ConversationModel.findOne({ _id: conversationId }).lean();
 
         if (!conversation) {
-            throw new Error("Cannot fine the conversation");
+            throw new Error("Cannot find the conversation");
         }
 
         const messages = conversation.messages;
