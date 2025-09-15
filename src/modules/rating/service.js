@@ -1,8 +1,12 @@
+import { sessionWrapper } from "../../utils/session.js";
 import RatingModel from "./model.js";
+import RecipeService from "../recipe/service.js";
 import { ObjectId } from "mongodb";
 
 class RatingService {
     #model;
+    #recipeService;
+    #recentRatingsLimit = 5;
     #pagination = {
         page: 1,
         cursor: "",
@@ -13,6 +17,7 @@ class RatingService {
 
     constructor() {
         this.#model = RatingModel;
+        this.#recipeService = new RecipeService();
     }
 
     get model() {
@@ -25,6 +30,10 @@ class RatingService {
 
     get paginationData() {
         return this.#pagination;
+    }
+
+    get recipeService() {
+        return this.#recipeService;
     }
 
     transfromData(data) {
@@ -90,11 +99,42 @@ class RatingService {
 
         // notify the author here
 
-        return this.model.findOneAndUpdate(
-            { recipeId: data.recipeId, "rater.raterId": data.rater.raterId },
-            { $set: data },
-            { upsert: true, new: true }
-        );
+        return sessionWrapper(async (session) => {
+            this.model.updateMany({ userId: data.userId, isRead: false }, { $set: { isRead: true } }, { session });
+
+            const result = await this.model.findOneAndUpdate(
+                { recipeId: data.recipeId, "rater.raterId": data.rater.raterId },
+                { $set: data },
+                { upsert: true, new: true, session }
+            );
+
+            const recipe = await this.recipeService.getRecipe({ recipeId: data.recipeId }, { topFiveRecentRatings: 1 });
+
+            if (!recipe) {
+                throw new Error("Cannot find the recipe");
+            }
+
+            const topFiveRecentRatings = recipe.topFiveRecentRatings;
+            const newTopFiveRecentRatings = [
+                ...topFiveRecentRatings,
+                {
+                    ratingsId: result._id,
+                    comment: result.comment,
+                    rating: result.rating,
+                    rater: result.rater,
+                    likes: result.likes,
+                    createdAt: result.createdAt
+                }
+            ];
+
+            if (newTopFiveRecentRatings.length > this.#recentRatingsLimit) {
+                newTopFiveRecentRatings.shift();
+            }
+
+            await this.recipeService.updateRecipeTopRatingsViaId(data.recipeId, { topFiveRecentRatings: newTopFiveRecentRatings }, session);
+
+            return result;
+        });
     }
 
     async getAllRating(data) {
