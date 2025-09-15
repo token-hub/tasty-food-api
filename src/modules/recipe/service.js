@@ -140,12 +140,13 @@ class RecipeService {
         return this.model.countDocuments(query);
     }
 
-    getRecipe(data) {
+    getRecipe(data, projection = null) {
         if (!data.recipeId) {
             throw new Error("Recipe Id is missing");
         }
         this.transformData(data);
-        return this.model.findById({ _id: data.recipeId }, { totalRating: 0, isArchive: 0, __v: 0 });
+        const projectionToUse = projection ?? { totalRating: 0, isArchive: 0, __v: 0 };
+        return this.model.findById({ _id: data.recipeId }, projectionToUse).lean();
     }
 
     createRecipe(data) {
@@ -184,6 +185,26 @@ class RecipeService {
             {
                 runValidators: true,
                 returnDocument: "after"
+            }
+        );
+    }
+
+    async updateRecipeTopRatingsViaId(recipeId, data, session) {
+        if (!recipeId) {
+            throw new Error("Recipe Id is missing");
+        }
+
+        if (!data || (data && !Object.keys(data).length)) return;
+
+        return this.model.findByIdAndUpdate(
+            { _id: recipeId },
+            {
+                $set: data
+            },
+            {
+                runValidators: true,
+                returnDocument: "after",
+                session
             }
         );
     }
