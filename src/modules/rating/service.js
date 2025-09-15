@@ -114,21 +114,34 @@ class RatingService {
                 throw new Error("Cannot find the recipe");
             }
 
+            const alreadyRated = recipe.topFiveRecentRatings.some((rating) => data.rater.raterId.equals(rating.rater.raterId));
             const topFiveRecentRatings = recipe.topFiveRecentRatings;
-            const newTopFiveRecentRatings = [
-                ...topFiveRecentRatings,
-                {
-                    ratingsId: result._id,
-                    comment: result.comment,
-                    rating: result.rating,
-                    rater: result.rater,
-                    likes: result.likes,
-                    createdAt: result.createdAt
-                }
-            ];
+            let newTopFiveRecentRatings;
+            const newRating = {
+                ratingsId: result._id,
+                comment: result.comment,
+                rating: result.rating,
+                rater: result.rater,
+                likes: result.likes,
+                createdAt: result.createdAt
+            };
 
-            if (newTopFiveRecentRatings.length > this.#recentRatingsLimit) {
-                newTopFiveRecentRatings.shift();
+            if (alreadyRated) {
+                newTopFiveRecentRatings = [...topFiveRecentRatings].map((rating) => {
+                    if (data.rater.raterId.equals(rating.rater.raterId)) {
+                        return {
+                            ...rating,
+                            ...newRating
+                        };
+                    } else {
+                        return rating;
+                    }
+                });
+            } else {
+                newTopFiveRecentRatings = [...topFiveRecentRatings, newRating];
+                if (newTopFiveRecentRatings.length > this.#recentRatingsLimit) {
+                    newTopFiveRecentRatings.shift();
+                }
             }
 
             await this.recipeService.updateRecipeTopRatingsViaId(data.recipeId, { topFiveRecentRatings: newTopFiveRecentRatings }, session);
