@@ -196,6 +196,11 @@ class RecipeService {
 
         if (!data || (data && !Object.keys(data).length)) return;
 
+        const options = { runValidators: true, returnDocument: "after" };
+        if (session) {
+            options.session = session;
+        }
+
         return this.model.findByIdAndUpdate(
             { _id: recipeId },
             {
@@ -204,7 +209,7 @@ class RecipeService {
             {
                 runValidators: true,
                 returnDocument: "after",
-                session
+                options
             }
         );
     }
