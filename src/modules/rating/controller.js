@@ -55,7 +55,7 @@ class RatingController {
 
     likeUnlikeRating = async (req, res, next) => {
         try {
-            const data = req.params;
+            const data = { ...req.params, ...req.body };
             const rating = await this.service.likeUnlikeRating(data);
 
             return res.status(201).json({
