@@ -183,17 +183,39 @@ class RatingService {
     }
 
     async likeUnlikeRating(data) {
-        // add validation for data.likerId and data.ratingId
-        data = this.transformData(data);
-
-        const rating = await this.model.findOne({ _id: data.ratingId });
+        // add validation for data.likerId and data.ratingId and recipeId
+        this.transformData(data);
+        let isTopRating = data?.isTopRating ?? true;
+        const rating = await this.model.findOne({ _id: data.ratingId }).lean();
 
         if (!rating) {
             throw new Error("Cannot find the rating");
         }
 
+        if (isTopRating) {
+            const recipe = await this.recipeService.getRecipe({ recipeId: data.recipeId }, { _id: 1, topFiveRecentRatings: 1 });
+
+            if (!recipe) {
+                throw new Error("Cannot find the recipe");
+            }
+
+            const newLikes = rating.likes.some((id) => id.equals(data.likerId))
+                ? rating.likes.filter((id) => !id.equals(data.likerId))
+                : [...rating.likes, data.likerId];
+
+            const newTopFiveRecentRatings = recipe.topFiveRecentRatings.map((topRating) => {
+                if (topRating.ratingsId.equals(data.ratingId)) {
+                    return { ...topRating, likes: newLikes };
+                } else {
+                    return topRating;
+                }
+            });
+
+            await this.recipeService.updateRecipeTopRatingsViaId(data.recipeId, { topFiveRecentRatings: newTopFiveRecentRatings });
+        }
+
         let update;
-        const hasAlreadyLiked = rating.likes.includes(data.likerId);
+        const hasAlreadyLiked = rating.likes.some((id) => id.equals(data.likerId));
 
         if (hasAlreadyLiked) {
             update = { $pull: { likes: data.likerId } };
