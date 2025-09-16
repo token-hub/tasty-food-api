@@ -66,6 +66,20 @@ class RatingController {
             next(error);
         }
     };
+
+    getRatingsTotalCount = async (req, res, next) => {
+        try {
+            const data = req.params;
+            const count = await this.service.getRatingsTotalCount(data);
+
+            return res.status(200).json({
+                status: "Success",
+                details: count
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new RatingController();
