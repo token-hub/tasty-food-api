@@ -108,7 +108,7 @@ const RecipeSchema = new Schema(
                     trim: true,
                     required: true
                 },
-                rating: {
+                rate: {
                     type: Number,
                     default: 0
                 },
