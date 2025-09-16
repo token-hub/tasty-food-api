@@ -36,7 +36,7 @@ class RatingService {
         return this.#recipeService;
     }
 
-    transfromData(data) {
+    transformData(data) {
         if (data.recipeId) {
             data.recipeId = new ObjectId(data.recipeId);
         }
@@ -55,6 +55,11 @@ class RatingService {
 
         if (data.likerId) {
             data.likerId = new ObjectId(data.likerId);
+        }
+
+        if (data.pagination) {
+            this.paginationData = data.pagination;
+            delete data.pagination;
         }
 
         return data;
@@ -95,7 +100,7 @@ class RatingService {
             throw new Error("Missing required Data");
         }
 
-        data = this.transfromData(data);
+        data = this.transformData(data);
 
         // notify the author here
 
@@ -120,7 +125,7 @@ class RatingService {
             const newRating = {
                 ratingsId: result._id,
                 comment: result.comment,
-                rating: result.rating,
+                rate: result.rate,
                 rater: result.rater,
                 likes: result.likes,
                 createdAt: result.createdAt
@@ -151,11 +156,10 @@ class RatingService {
     }
 
     async getAllRating(data) {
-        this.paginationData = data.pagination;
-        delete data.pagination;
         // add validation
+        // recipe Id should always be present
 
-        data = this.transfromData(data);
+        this.transformData(data);
         const { query, skip } = this.getQueryAllRating(data);
         const { sortBy, order, limit, page } = this.paginationData;
 
@@ -173,14 +177,14 @@ class RatingService {
 
     async getRating(data) {
         // add validation for data.raterId and data.recipeId
-        data = this.transfromData(data);
+        data = this.transformData(data);
 
         return await this.model.findOne({ recipeId: data.recipeId, "rater.raterId": data.raterId });
     }
 
     async likeUnlikeRating(data) {
         // add validation for data.likerId and data.ratingId
-        data = this.transfromData(data);
+        data = this.transformData(data);
 
         const rating = await this.model.findOne({ _id: data.ratingId });
 
@@ -202,6 +206,19 @@ class RatingService {
                 new: true
             })
             .select("likes");
+    }
+
+    getRatingsTotalCount(data) {
+        const query = {};
+        if (data) {
+            this.transformData(data);
+
+            if (data.recipeId) {
+                query.recipeId = data.recipeId;
+            }
+        }
+
+        return this.model.countDocuments(query);
     }
 }
 
