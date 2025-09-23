@@ -105,8 +105,7 @@ const RecipeSchema = new Schema(
                 },
                 comment: {
                     type: String,
-                    trim: true,
-                    required: true
+                    trim: true
                 },
                 rate: {
                     type: Number,
