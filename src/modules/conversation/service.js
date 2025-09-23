@@ -6,8 +6,11 @@ class ConversationService {
     #model;
     #messageService;
     #pagination = {
+        page: 1,
         cursor: "",
-        limit: 6
+        limit: 6,
+        sortBy: "updatedAt",
+        order: -1
     };
 
     constructor() {
@@ -165,7 +168,14 @@ class ConversationService {
         this.transformData(data);
 
         let query = this.getConversationQuery(data);
-        return await this.model.find(query).sort({ updatedAt: -1 }).limit(this.paginationData.limit);
+
+        const { sortBy, limit, skip, order } = this.paginationData;
+
+        return this.model
+            .find(query)
+            .sort({ [sortBy]: order })
+            .skip(skip)
+            .limit(limit);
     }
 
     static getConversationById(conversationId, projection) {
