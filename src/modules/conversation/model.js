@@ -6,7 +6,7 @@ const ConversationSchema = new Schema(
             {
                 recipeId: { type: Schema.Types.ObjectId, required: true },
                 name: { type: String, required: true },
-                imageLink: { type: String, required: true },
+                imageLink: { type: String, default: null },
                 isLatest: { type: Boolean, default: true }
             }
         ],
