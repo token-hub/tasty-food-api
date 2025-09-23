@@ -68,6 +68,11 @@ class ConversationService {
         if (data.recipeId) {
             data.recipeId = new ObjectId(data.recipeId);
         }
+
+        if (data.pagination) {
+            this.paginationData = data.pagination;
+            delete data.pagination;
+        }
     }
 
     getConversation(data) {
@@ -158,8 +163,6 @@ class ConversationService {
 
     async getConversations(data) {
         this.transformData(data);
-        this.paginationData = data.pagination;
-        delete data.pagination;
 
         let query = this.getConversationQuery(data);
         return await this.model.find(query).sort({ updatedAt: -1 }).limit(this.paginationData.limit);
