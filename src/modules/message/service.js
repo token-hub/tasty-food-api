@@ -34,6 +34,15 @@ class MessageService {
         if (data.userId) {
             data.userId = new ObjectId(data.userId);
         }
+
+        if (data.isReadBy && data.isReadBy.length) {
+            data.isReadBy = data.isReadBy.map((id) => new ObjectId(id));
+        }
+
+        if (data.pagination) {
+            this.paginationData = data.pagination;
+            delete data.pagination;
+        }
     }
 
     set paginationData(data) {
@@ -54,7 +63,9 @@ class MessageService {
 
             if (conversation.messages.length) {
                 const lastMessageShowned = conversation.messages[0];
-                this.paginationData = { cursor: new Date(lastMessageShowned.updatedAt) };
+                if (this.paginationData.cursor === "") {
+                    this.paginationData.cursor = lastMessageShowned.updatedAt;
+                }
             }
         }
 
@@ -76,11 +87,13 @@ class MessageService {
 
         const query = await this.getMessagesQuery(data);
         const { sortBy, order, limit } = this.paginationData;
-        const explain = await this.model
+
+        const result = await this.model
             .find(query)
-            .sort({ [sortBy]: order })
+            .sort({ [sortBy]: Number(order) })
             .limit(limit);
-        return explain;
+
+        return result;
     }
 
     async createMessage(data) {
@@ -95,7 +108,7 @@ class MessageService {
                     message: data.message,
                     userId: data.userId,
                     recipeId: data.recipeId,
-                    isRead: false,
+                    isReadBy: data.isReadBy,
                     updatedAt: message[0].updatedAt.toISOString()
                 },
                 limit: this.paginationData.limit,
