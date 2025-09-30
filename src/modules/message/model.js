@@ -6,7 +6,7 @@ const MessageSchema = new Schema(
         recipeId: { type: Schema.Types.ObjectId, required: true },
         conversationId: { type: Schema.Types.ObjectId, required: true },
         message: { type: String, required: true },
-        isRead: { type: Boolean, default: false }
+        isReadBy: [{ type: Schema.Types.ObjectId }]
     },
     { timestamps: true }
 );

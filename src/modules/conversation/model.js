@@ -22,7 +22,7 @@ const ConversationSchema = new Schema(
                 message: { type: String, required: true },
                 userId: { type: Schema.Types.ObjectId, required: true },
                 recipeId: { type: Schema.Types.ObjectId, required: true },
-                isRead: { type: Boolean, default: false },
+                isReadBy: [{ type: Schema.Types.ObjectId }],
                 updatedAt: { type: Date, required: true }
             }
         ]
