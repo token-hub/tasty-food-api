@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { createServer } from "http";
 
 // utils
 import "./utils/db/db.js";
@@ -8,6 +9,7 @@ import "./utils/db/mongoose.js";
 import { errorHandler } from "./middlewares/errors/errorHandler.js";
 import { multipleErrorsHandler } from "./middlewares/errors/multipleErrorsHandler.js";
 import { logErrors } from "./middlewares/errors/logErrors.js";
+import { createSocket } from "./modules/socket/socket.js";
 
 import recipeRoutes from "./modules/recipe/index.js";
 import ratingRoutes from "./modules/rating/index.js";
@@ -19,6 +21,7 @@ import userRoutes from "./modules/user/index.js";
 import authRoutes from "./modules/auth/index.js";
 
 const app = express();
+const httpServer = createServer(app);
 
 // Middleware configuration
 app.use(express.json());
@@ -29,6 +32,9 @@ app.use(
         credentials: true
     })
 );
+
+// Socket.io
+createSocket(httpServer);
 
 // routes
 app.use("/api/recipes", recipeRoutes);
@@ -44,4 +50,4 @@ app.use(logErrors);
 app.use(multipleErrorsHandler);
 app.use(errorHandler);
 
-export default app;
+export default httpServer;
