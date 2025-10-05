@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 
-const authenticatedUsers = [];
+let authenticatedUsers = [];
 
 export function createSocket(server) {
     const io = new Server(server, { cors: { origin: process.env.CLIENT_URL, methods: ["GET", "POST"] } });
@@ -16,6 +16,12 @@ export function createSocket(server) {
                 authenticatedUsers.push({ id: data.id, socketId: data.socketId });
                 socket.broadcast.emit("users", authenticatedUsers);
             }
+        });
+
+        socket.on("logout", (data) => {
+            console.log("user has loggout: ", data);
+            authenticatedUsers = authenticatedUsers.filter((user) => user.id !== data.id);
+            io.emit("users", authenticatedUsers);
         });
     });
 }
