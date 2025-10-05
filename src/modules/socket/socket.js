@@ -23,5 +23,15 @@ export function createSocket(server) {
             authenticatedUsers = authenticatedUsers.filter((user) => user.id !== data.id);
             io.emit("users", authenticatedUsers);
         });
+
+        socket.on("private-message", (data) => {
+            console.log("Private Message:", data);
+            const targetUser = authenticatedUsers.find((user) => user.id === data.to);
+            if (targetUser) {
+                io.to(targetUser.socketId).emit("private-message", data.message);
+            } else {
+                console.log("Target user not found:", data.to);
+            }
+        });
     });
 }
