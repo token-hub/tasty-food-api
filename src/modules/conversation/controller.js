@@ -51,6 +51,20 @@ class ConversationController {
             next(error);
         }
     };
+
+    markUnreadMessages = async (req, res, next) => {
+        try {
+            const data = req.body;
+            data.conversationId = req.params.conversationId;
+            const conversation = await this.service.markUnreadMessages(data);
+            return res.status(200).json({
+                status: "Success",
+                details: conversation
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default new ConversationController();

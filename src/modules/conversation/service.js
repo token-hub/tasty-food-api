@@ -1,6 +1,7 @@
 import ConversationModel from "./model.js";
 import { ObjectId } from "mongodb";
 import MessageService from "../message/service.js";
+import { sessionWrapper } from "../../utils/session.js";
 
 class ConversationService {
     #model;
@@ -176,6 +177,48 @@ class ConversationService {
             .sort({ [sortBy]: order })
             .skip(skip)
             .limit(limit);
+    }
+
+    async markUnreadMessages(data) {
+        this.transformData(data);
+
+        const conversation = await ConversationService.getConversationById(data.conversationId, { messages: 1 });
+
+        if (!conversation) {
+            throw new Error("Conversation not found");
+        }
+
+        const messagesToUpdate = conversation.messages.filter((m) => {
+            return !m.isReadBy.some((id) => {
+                return id.equals(data.userId);
+            });
+        });
+
+        if (messagesToUpdate.length < 1) {
+            return "nothing to update";
+        }
+
+        const unreadToReadMessages = conversation.messages.map((m) => {
+            if (!m.isReadBy.some((id) => id.equals(data.userId))) {
+                m.isReadBy.push(data.userId);
+                return m;
+            } else {
+                return m;
+            }
+        });
+
+        await sessionWrapper(async (session) => {
+            await this.model.updateOne(
+                {
+                    _id: data.conversationId
+                },
+                { $set: { messages: unreadToReadMessages } },
+                { session }
+            );
+            await this.messageService.updateMessages(data, session);
+        });
+
+        return "success";
     }
 
     static getConversationById(conversationId, projection) {

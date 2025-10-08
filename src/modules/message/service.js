@@ -118,6 +118,24 @@ class MessageService {
             return message;
         });
     }
+
+    updateMessages(data, session) {
+        if (!data.conversationId) {
+            throw new Error("ConversationId must not be empty");
+        }
+
+        if (!data.userId) {
+            throw new Error("userId must not be empty");
+        }
+
+        return this.model.updateMany(
+            { conversationId: data.conversationId, isReadBy: { $ne: data.userId } },
+            {
+                $push: { isReadBy: data.userId }
+            },
+            { session }
+        );
+    }
 }
 
 export default MessageService;
