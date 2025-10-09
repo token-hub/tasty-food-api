@@ -125,16 +125,36 @@ class ConversationService {
         return this.model.findOneAndUpdate({ _id: conversation._id }, query, { new: true });
     }
 
-    updateConversationRecipeTopics(conversation, newRecipe) {
-        const existingRecipeTopics = conversation.recipes.map((recipe) => {
-            return {
-                ...recipe,
-                isLatest: false
-            };
-        });
+    async updateConversationRecipeTopics(conversation, data) {
+        const query = {};
 
-        const newRecipeTopics = [...existingRecipeTopics, { ...newRecipe, isLatest: true }];
-        return this.model.findOneAndUpdate({ _id: conversation._id }, { $set: { recipes: newRecipeTopics } }, { new: true });
+        const recipeExists = conversation.recipes.find((recipe) => recipe.recipeId.equals(data.recipe.recipeId));
+        if (recipeExists && recipeExists.isLatest) {
+            return conversation;
+        }
+
+        if (recipeExists && !recipeExists.isLatest) {
+            const updatedTopics = conversation.recipes.map((recipe) => {
+                if (recipe.recipeId.equals(data.recipe.recipeId)) {
+                    return { ...recipe, isLatest: true };
+                } else {
+                    return { ...recipe, isLatest: false };
+                }
+            });
+
+            const messages = await this.messageService.getMessages({ conversationId: conversation._id, recipeId: data.recipe.recipeId });
+            query.recipes = updatedTopics;
+            query.messages = messages;
+        }
+
+        if (!recipeExists) {
+            const previousTopics = conversation.recipes.map((recipe) => ({ ...recipe, isLatest: false }));
+            const updatedTopics = [...previousTopics, { ...data.recipe, isLatest: true }];
+            query.recipes = updatedTopics;
+            query.messages = [];
+        }
+
+        return this.model.findOneAndUpdate({ _id: conversation._id }, { $set: query }, { new: true });
     }
 
     async createConversation(data) {
@@ -149,10 +169,7 @@ class ConversationService {
             return this.model.create(data);
         }
 
-        const recipeExists = conversation.recipes.some((recipe) => recipe.recipeId.equals(data.recipe.recipeId));
-        if (recipeExists) return;
-
-        return this.updateConversationRecipeTopics(conversation, data.recipe);
+        return this.updateConversationRecipeTopics(conversation, data);
     }
 
     getConversationQuery(data) {
