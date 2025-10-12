@@ -111,7 +111,7 @@ class MessageService {
                     isReadBy: data.isReadBy,
                     updatedAt: message[0].updatedAt.toISOString()
                 },
-                limit: this.paginationData.limit,
+
                 session
             });
 

@@ -2,6 +2,7 @@ import ConversationModel from "./model.js";
 import { ObjectId } from "mongodb";
 import MessageService from "../message/service.js";
 import { sessionWrapper } from "../../utils/session.js";
+import { faker } from "@faker-js/faker";
 
 class ConversationService {
     #model;
@@ -9,7 +10,7 @@ class ConversationService {
     #pagination = {
         page: 1,
         cursor: "",
-        limit: 6,
+        limit: 10,
         sortBy: "updatedAt",
         order: -1
     };
@@ -17,6 +18,7 @@ class ConversationService {
     constructor() {
         this.#model = ConversationModel;
         this.#messageService = new MessageService();
+        // this.createDummy(20);
     }
 
     get model() {
@@ -248,7 +250,7 @@ class ConversationService {
         ).lean();
     }
 
-    static async updateConversationMessages({ conversationId, message, session, limit }) {
+    static async updateConversationMessages({ conversationId, message, session }) {
         if (!conversationId) return;
 
         const conversation = await ConversationModel.findOne({ _id: conversationId }).lean();
@@ -260,7 +262,7 @@ class ConversationService {
         const messages = conversation.messages;
         const newMessages = [...messages, message];
 
-        if (newMessages.length > limit) {
+        if (newMessages.length > 10) {
             newMessages.shift();
         }
 
@@ -271,6 +273,52 @@ class ConversationService {
             { $set: { messages: newMessages } },
             { session }
         );
+    }
+
+    async createDummy(count = 10) {
+        console.log("Creating dummy conversations");
+        const arr = [];
+        for (let i = 0; i < count; i++) {
+            const recipeId = new ObjectId();
+            const userId = new ObjectId();
+            const _id = new ObjectId();
+
+            arr.push({
+                _id,
+                recipes: [
+                    {
+                        recipeId,
+                        name: faker.food.dish(),
+                        imageLink: null,
+                        isLatest: false
+                    }
+                ],
+                participants: [
+                    {
+                        name: "OdinProject",
+                        userId: new ObjectId("68c2dfc0f1943702bda209f5")
+                    },
+                    {
+                        name: faker.person.firstName(),
+                        userId
+                    }
+                ],
+                messages: [
+                    {
+                        userId,
+                        recipeId,
+                        conversationId: _id,
+                        message: faker.lorem.sentence(5),
+                        messageId: new ObjectId(),
+                        isReadBy: [userId],
+                        updatedAt: new Date()
+                    }
+                ]
+            });
+        }
+
+        await this.model.insertMany(arr);
+        console.log("Done Creating Dummy.");
     }
 }
 
