@@ -1,11 +1,15 @@
 import { sessionWrapper } from "../../utils/session.js";
 import RatingModel from "./model.js";
 import RecipeService from "../recipe/service.js";
+import NotificationService from "../notification/service.js";
+import { NOTIFICATION_TYPES } from "../../utils/notifications.js";
+
 import { ObjectId } from "mongodb";
 
 class RatingService {
     #model;
     #recipeService;
+    #NotificationService;
     #recentRatingsLimit = 5;
     #pagination = {
         page: 1,
@@ -18,6 +22,7 @@ class RatingService {
     constructor() {
         this.#model = RatingModel;
         this.#recipeService = new RecipeService();
+        this.#NotificationService = new NotificationService();
     }
 
     get model() {
@@ -34,6 +39,10 @@ class RatingService {
 
     get recipeService() {
         return this.#recipeService;
+    }
+
+    get notificationService() {
+        return this.#NotificationService;
     }
 
     transformData(data) {
@@ -105,6 +114,12 @@ class RatingService {
         // notify the author here
 
         return sessionWrapper(async (session) => {
+            const recipe = await this.recipeService.getRecipe({ recipeId: data.recipeId }, { topFiveRecentRatings: 1, image: 1, name: 1, author: 1 });
+
+            if (!recipe) {
+                throw new Error("Cannot find the recipe");
+            }
+
             this.model.updateMany({ userId: data.userId, isRead: false }, { $set: { isRead: true } }, { session });
 
             const result = await this.model.findOneAndUpdate(
@@ -112,12 +127,6 @@ class RatingService {
                 { $set: data },
                 { upsert: true, new: true, session }
             );
-
-            const recipe = await this.recipeService.getRecipe({ recipeId: data.recipeId }, { topFiveRecentRatings: 1 });
-
-            if (!recipe) {
-                throw new Error("Cannot find the recipe");
-            }
 
             const alreadyRated = recipe.topFiveRecentRatings.some((rating) => data.rater.raterId.equals(rating.rater.raterId));
             const topFiveRecentRatings = recipe.topFiveRecentRatings;
@@ -150,6 +159,21 @@ class RatingService {
             }
 
             await this.recipeService.updateRecipeTopRatingsViaId(data.recipeId, { topFiveRecentRatings: newTopFiveRecentRatings }, session);
+
+            const notification = NOTIFICATION_TYPES[0];
+
+            // create notification for the user here
+            await this.notificationService.createNotification({
+                subject: notification.subject,
+                recipe: {
+                    name: recipe?.image?.type.name,
+                    imageLink: recipe?.image?.type.link
+                },
+                title: notification.title,
+                description: `${notification.description} ${recipe.name}`,
+                userId: recipe.author.userId,
+                link: `/recipes/${recipe._id}#ratings`
+            });
 
             return result;
         });

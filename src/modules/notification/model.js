@@ -4,8 +4,8 @@ const NotificationSchema = new Schema(
     {
         subject: { type: String, required: true },
         recipe: {
-            name: { type: String, required: true },
-            imageLink: { type: String, required: true }
+            name: { type: String },
+            imageLink: { type: String }
         },
         title: { type: String, required: true },
         description: { type: String, required: true },
