@@ -9,7 +9,7 @@ import "./utils/db/mongoose.js";
 import { errorHandler } from "./middlewares/errors/errorHandler.js";
 import { multipleErrorsHandler } from "./middlewares/errors/multipleErrorsHandler.js";
 import { logErrors } from "./middlewares/errors/logErrors.js";
-import { createSocket } from "./modules/socket/socket.js";
+import Socket from "./modules/socket/socket.js";
 
 import recipeRoutes from "./modules/recipe/index.js";
 import ratingRoutes from "./modules/rating/index.js";
@@ -34,7 +34,7 @@ app.use(
 );
 
 // Socket.io
-createSocket(httpServer);
+export const socket = new Socket(httpServer);
 
 // routes
 app.use("/api/recipes", recipeRoutes);
