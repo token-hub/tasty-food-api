@@ -79,7 +79,7 @@ class RecipeService {
 
         let query = { isArchive: Boolean(data?.isArchive) };
         if (cursor) {
-            query.updatedAt = { [order == -1 ? "$lte" : "$gte"]: new Date(cursor) };
+            query.updatedAt = { [order == -1 ? "$lt" : "$gt"]: new Date(cursor) };
         }
 
         if (data?.author) {
@@ -270,8 +270,7 @@ class RecipeService {
             };
             data.push(recipe);
         }
-        console.log(data);
-
+  
         try {
             await this.model.insertMany(data);
             console.log("Done creating dummy recipes");
