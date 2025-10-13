@@ -93,7 +93,7 @@ class RatingService {
         }
 
         if (cursor) {
-            query.updatedAt = { [order == -1 ? "$lte" : "$gte"]: new Date(cursor) };
+            query.updatedAt = { [order == -1 ? "$lt" : "$gt"]: new Date(cursor) };
         }
 
         return { query, skip };
