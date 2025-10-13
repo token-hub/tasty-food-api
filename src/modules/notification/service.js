@@ -128,35 +128,38 @@ class NotificationService {
         });
     }
 
-    async createDummy(count = 10) {
-        console.log("Creating dummy notifications");
-        // const arr = [];
-        // for (let i = 0; i < count; i++) {
-        //     arr.push({
-        //         _id: new ObjectId(),
-        //         subject: i,
-        //         title: i,
-        //         description: "A new user submitted a rating to your recipe odin",
-        //         userId: new ObjectId("68c2dfc0f1943702bda209f5"),
-        //         isRead: false,
-        //         link: "/OdinProject/recipes/68c2e03ff1943702bda20aab#ratings"
-        //     });
-        // }
-
-        const inserted = await this.model.find({});
-
-        for (let i = 0; i < inserted.length; i++) {
-            const today = new Date();
-            const futureDate = new Date(today);
-            futureDate.setDate(today.getDate() + i);
-
-            const newDate = futureDate;
-            const res = await this.model.updateOne(
-                { _id: inserted[i]._id },
-                { $set: { createdAt: newDate, updatedAt: newDate } },
-                { timestamps: false }
-            );
+    async createDummy(count = 10, currentCount = 0) {
+        if (currentCount == count) {
+            return;
         }
+
+        if (currentCount == 0);
+        {
+            console.log("Creating dummy notifications");
+        }
+
+        await new Promise(async (resolve, reject) => {
+            const sample = {
+                _id: new ObjectId(),
+                subject: currentCount,
+                title: currentCount,
+                description: "A new user submitted a rating to your recipe odin",
+                userId: new ObjectId("68c2dfc0f1943702bda209f5"),
+                isRead: false,
+                link: "/OdinProject/recipes/68c2e03ff1943702bda20aab#ratings"
+            };
+
+            await new Promise((resolve) => {
+                setTimeout(() => {
+                    console.log("will be creating dummy number: ", currentCount);
+                    resolve();
+                }, 200);
+            });
+
+            await this.model.insertOne(sample);
+            resolve(currentCount++);
+        });
+        this.createDummy(count, currentCount);
     }
 }
 
