@@ -3,6 +3,7 @@ import RatingModel from "./model.js";
 import RecipeService from "../recipe/service.js";
 import NotificationService from "../notification/service.js";
 import { NOTIFICATION_TYPES } from "../../utils/notifications.js";
+import { socket } from "../../app.js";
 
 import { ObjectId } from "mongodb";
 
@@ -163,7 +164,7 @@ class RatingService {
             const notification = NOTIFICATION_TYPES[0];
 
             // create notification for the user here
-            await this.notificationService.createNotification({
+            const notificationResult = await this.notificationService.createNotification({
                 subject: notification.subject,
                 recipe: {
                     name: recipe?.image?.type.name,
@@ -172,8 +173,10 @@ class RatingService {
                 title: notification.title,
                 description: `${notification.description} ${recipe.name}`,
                 userId: recipe.author.userId,
-                link: `/recipes/${recipe._id}#ratings`
+                link: `/${recipe.author.name}/recipes/${recipe._id}#ratings`
             });
+
+            socket.emitTo(recipe.author.userId.toString(), "notification", { to: recipe.author.userId.toString(), notification: notificationResult });
 
             return result;
         });
