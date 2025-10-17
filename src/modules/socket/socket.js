@@ -58,7 +58,7 @@ class Socket {
             socket.on("logout", (data) => {
                 console.log("user has loggout: ", data);
                 this.authenticatedUsers = this.authenticatedUsers.filter((user) => user.id !== data.id);
-                this.serve.emit("users", this.authenticatedUsers);
+                this.server.emit("users", this.authenticatedUsers);
             });
 
             socket.on("private-message", (data) => {
