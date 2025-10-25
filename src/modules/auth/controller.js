@@ -14,10 +14,15 @@ class AuthController {
     signUp = async (req, res, next) => {
         try {
             const data = req.body;
-            const result = await this.service.signUp(data);
+            const { setCookie, response } = await this.service.signUp(data);
+
+            if (setCookie) {
+                res.setHeader("Set-Cookie", setCookie);
+            }
+
             return res.status(201).json({
                 status: "Success",
-                details: result
+                details: response,
             });
         } catch (error) {
             next(error);
@@ -36,7 +41,7 @@ class AuthController {
 
             return res.status(200).json({
                 status: "Success",
-                details: response
+                details: response,
             });
         } catch (error) {
             next(error);
@@ -54,7 +59,7 @@ class AuthController {
 
             return res.status(200).json({
                 status: "Success",
-                details: response
+                details: response,
             });
         } catch (error) {
             next(error);
@@ -68,7 +73,7 @@ class AuthController {
 
             return res.status(200).json({
                 status: "Success",
-                details: result
+                details: result,
             });
         } catch (error) {
             next(error);
@@ -92,7 +97,7 @@ class AuthController {
             const session = await this.service.getSession(headers);
             return res.status(200).json({
                 status: "Success",
-                details: session
+                details: session,
             });
         } catch (error) {
             next(error);
@@ -105,7 +110,7 @@ class AuthController {
             const reset = await this.service.requestPasswordReset(data);
             return res.status(200).json({
                 status: "Success",
-                details: reset
+                details: reset,
             });
         } catch (error) {
             next(error);
@@ -118,7 +123,7 @@ class AuthController {
             const reset = await this.service.passwordReset(data);
             return res.status(200).json({
                 status: "Success",
-                details: reset
+                details: reset,
             });
         } catch (error) {
             next(error);
@@ -132,7 +137,7 @@ class AuthController {
             const result = await this.service.changePassword(data, headers);
             return res.status(200).json({
                 status: "Success",
-                details: result
+                details: result,
             });
         } catch (error) {
             next(error);
@@ -146,7 +151,7 @@ class AuthController {
             const result = await this.service.updateUser(data, headers);
             return res.status(200).json({
                 status: "Success",
-                details: result
+                details: result,
             });
         } catch (error) {
             next(error);

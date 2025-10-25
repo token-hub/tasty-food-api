@@ -11,13 +11,18 @@ class AuthService {
         return this.#auth;
     }
 
-    signUp(data) {
+    async signUp(data) {
         // add validation
         // data should have, name, email, and password
 
-        return this.auth.api.signUpEmail({
-            body: data
+        const result = await this.auth.api.signUpEmail({
+            returnHeaders: true,
+            body: data,
         });
+
+        const setCookie = result.headers.get("set-cookie");
+
+        return { setCookie, response: result.response };
     }
 
     async signIn(data, headers) {
@@ -26,7 +31,7 @@ class AuthService {
         const result = await this.auth.api.signInEmail({
             returnHeaders: true,
             body: data,
-            headers
+            headers,
         });
 
         const setCookie = result.headers.get("set-cookie");
@@ -45,7 +50,7 @@ class AuthService {
     async sendEmailVerification(data) {
         // add validation, make sure email is present
         return this.auth.api.sendVerificationEmail({
-            body: { email: data.email, callbackURL: `${process.env.CLIENT_URL}/auth/email-verified` }
+            body: { email: data.email, callbackURL: `${process.env.CLIENT_URL}/auth/email-verified` },
         });
     }
 
@@ -53,8 +58,8 @@ class AuthService {
         // add validation, make sure the token is present
         return this.auth.api.verifyEmail({
             query: {
-                token: data.token
-            }
+                token: data.token,
+            },
         });
     }
 
@@ -65,7 +70,7 @@ class AuthService {
     requestPasswordReset(data) {
         // add validation to make sure, email and redirectTo is present
         return this.auth.api.requestPasswordReset({
-            body: data
+            body: data,
         });
     }
 
@@ -75,8 +80,8 @@ class AuthService {
         return this.auth.api.resetPassword({
             body: {
                 newPassword: data.password,
-                token: data.token
-            }
+                token: data.token,
+            },
         });
     }
 
@@ -91,9 +96,9 @@ class AuthService {
             body: {
                 newPassword: data.password,
                 currentPassword: data.oldPassword,
-                revokeOtherSessions: true
+                revokeOtherSessions: true,
             },
-            headers
+            headers,
         });
     }
 
@@ -106,7 +111,7 @@ class AuthService {
 
         return this.auth.api.updateUser({
             body: data,
-            headers
+            headers,
         });
     }
 }
