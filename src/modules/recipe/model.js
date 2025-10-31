@@ -5,9 +5,9 @@ const RecipeSchema = new Schema(
         author: {
             name: {
                 type: String,
-                required: true
+                required: true,
             },
-            userId: { type: mongoose.Schema.Types.ObjectId, required: true }
+            userId: { type: mongoose.Schema.Types.ObjectId, required: true },
         },
         ingredients: [
             {
@@ -15,120 +15,121 @@ const RecipeSchema = new Schema(
                     type: String,
                     trim: true,
                     lowercase: true,
-                    required: true
+                    required: true,
                 },
                 quantity: {
                     type: Number,
-                    required: true
+                    required: true,
                 },
                 unit: {
                     type: String,
-                    required: true
+                    required: true,
                 },
                 isMain: {
                     type: Boolean,
-                    default: false
-                }
-            }
+                    default: false,
+                },
+            },
         ],
         instructions: [{ id: { type: String }, instruction: { type: String, required: true } }],
         prepTime: {
             hours: {
                 type: Number,
-                default: 0
+                default: 0,
             },
             minutes: {
                 type: Number,
-                required: true
-            }
+                required: true,
+            },
         },
         cookTime: {
             hours: {
                 type: Number,
-                default: 0
+                default: 0,
             },
             minutes: {
                 type: Number,
-                required: true
-            }
+                required: true,
+            },
         },
         name: {
             type: String,
             trim: true,
             lowercase: true,
-            required: true
+            required: true,
         },
         description: {
             type: String,
             trim: true,
-            required: true
+            required: true,
         },
         categories: [String],
         image: {
             type: {
                 name: { type: String, required: true },
                 size: { type: String, required: true },
-                link: { type: String, required: true }
+                link: { type: String, required: true },
             },
-            default: null
+            default: null,
         },
         video: {
             type: {
                 name: { type: String, required: true },
                 length: { type: String, required: true },
                 size: { type: String, required: true },
-                link: { type: String, required: true }
+                link: { type: String, required: true },
             },
-            default: null
+            default: null,
         },
         totalRatings: {
             type: Number,
-            default: 0
+            default: 0,
         },
         numberOfRatings: {
             type: Number,
-            default: 0
+            default: 0,
         },
         isArchive: {
             type: Boolean,
-            default: false
+            default: false,
         },
         goodForPeopleCount: {
             type: Number,
-            default: 1
+            default: 1,
         },
         topFiveRecentRatings: [
             {
                 ratingsId: {
                     type: mongoose.Schema.Types.ObjectId,
-                    required: true
+                    required: true,
                 },
                 comment: {
                     type: String,
-                    trim: true
+                    trim: true,
                 },
                 rate: {
                     type: Number,
-                    default: 0
+                    default: 0,
                 },
                 rater: {
                     raterId: {
                         type: mongoose.Schema.Types.ObjectId,
-                        required: true
+                        required: true,
                     },
                     name: {
                         type: String,
-                        required: true
-                    }
+                        required: true,
+                    },
                 },
                 likes: [mongoose.Schema.Types.ObjectId],
                 createdAt: {
                     type: Number,
                     default: Date.now,
-                    required: true
-                }
-            }
-        ]
+                    required: true,
+                },
+            },
+        ],
+        isDummy: { type: Boolean, default: false },
         // topRatedIndex: {
         //     type: String,
         //     index: true,

@@ -11,7 +11,7 @@ class RecipeService {
         cursor: "",
         limit: 6,
         sortBy: "updatedAt",
-        order: -1
+        order: -1,
     };
 
     constructor() {
@@ -117,7 +117,7 @@ class RecipeService {
 
         return {
             recipes,
-            page
+            page,
         };
     }
 
@@ -180,11 +180,11 @@ class RecipeService {
         return this.model.findByIdAndUpdate(
             { _id: recipeId },
             {
-                $set: data
+                $set: data,
             },
             {
                 runValidators: true,
-                returnDocument: "after"
+                returnDocument: "after",
             }
         );
     }
@@ -204,12 +204,12 @@ class RecipeService {
         return this.model.findByIdAndUpdate(
             { _id: recipeId },
             {
-                $set: data
+                $set: data,
             },
             {
                 runValidators: true,
                 returnDocument: "after",
-                options
+                options,
             }
         );
     }
@@ -218,6 +218,7 @@ class RecipeService {
         console.log("Creating dummy recipes");
         const data = [];
         const units = ["ounce/s", "piece/s", "liter/s"];
+        const categories = ["fish", "pork", "beef", "chicken", "vegetable", "dessert"];
 
         function getIngredients() {
             const count = Math.floor(Math.random() * 10) + 1;
@@ -235,7 +236,7 @@ class RecipeService {
                 newIngredients.push({
                     name: ingredientToUse,
                     unit: unitToUse,
-                    quantity: quantityToUse
+                    quantity: quantityToUse,
                 });
             }
             return newIngredients;
@@ -252,25 +253,27 @@ class RecipeService {
         for (let i = 0; i < count; i++) {
             let recipe = {
                 author: {
-                    name: "John",
-                    userId: "68a7287130e1273419856675"
+                    name: faker.person.firstName(),
+                    userId: new ObjectId(),
                 },
                 ingredients: getIngredients(),
                 instructions: getInstructions(),
                 cookTime: {
                     hours: faker.number.int({ min: 0, max: 2 }),
-                    minutes: faker.number.int({ min: 0, max: 60 })
+                    minutes: faker.number.int({ min: 0, max: 60 }),
                 },
                 prepTime: {
                     hours: faker.number.int({ min: 0, max: 2 }),
-                    minutes: faker.number.int({ min: 0, max: 60 })
+                    minutes: faker.number.int({ min: 0, max: 60 }),
                 },
                 name: faker.food.dish(),
-                description: faker.food.description()
+                description: faker.food.description(),
+                categories: [categories[Math.floor(Math.random() * categories.length) + 1]],
+                isDummy: true,
             };
             data.push(recipe);
         }
-  
+
         try {
             await this.model.insertMany(data);
             console.log("Done creating dummy recipes");
