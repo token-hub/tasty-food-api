@@ -84,8 +84,7 @@ class AuthController {
         try {
             const data = req.query;
             await this.service.verifyEmail(data);
-            const redirect = `${process.env.CLIENT_URL}/emailVerified`;
-            return res.redirect(redirect);
+            return res.redirect(data.callbackURL);
         } catch (error) {
             next(error);
         }
